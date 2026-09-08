@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ApexKV — Interactive Live Demo</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    code, pre, .font-mono { font-family: 'Fira Code', monospace; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    @keyframes pulse-highlight {
+      0%, 100% { background-color: rgba(56, 189, 248, 0.1); border-color: #38bdf8; }
+      50% { background-color: rgba(56, 189, 248, 0.3); border-color: #00e5ff; }
+    }
+    .bucket-active { animation: pulse-highlight 1.5s infinite ease-in-out; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+
+  <!-- Top Navigation Bar -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-6 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="h-9 w-9 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg">
+        ⚡
+      </div>
+      <div>
+        <h1 class="font-bold text-lg tracking-tight text-white flex items-center gap-2">
+          ApexKV <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800">C++17 Engine</span>
+        </h1>
+        <p class="text-xs text-slate-400">Track D: Data & Storage &bull; Team: The Optimizer</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-emerald-400">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Zero Dependencies
+      </div>
+      <a href="https://github.com/Tanish75/ApexKV" target="_blank" class="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-cyan-600 hover:bg-cyan-500 text-white shadow flex items-center gap-1.5 transition">
+        <span>GitHub Repository</span> ↗
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+
+    <!-- Top Metrics & Status Banner -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+        <div class="text-xs text-slate-400 font-medium">TABLE CAPACITY</div>
+        <div class="flex items-baseline justify-between mt-1">
+          <span id="metric-capacity" class="text-2xl font-bold text-cyan-400">16</span>
+          <span class="text-xs text-slate-500">buckets</span>
+        </div>
+        <div class="text-[11px] text-slate-500 mt-1">Doubles on 0.75 load</div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+        <div class="text-xs text-slate-400 font-medium">TOTAL STORED KEYS</div>
+        <div class="flex items-baseline justify-between mt-1">
+          <span id="metric-size" class="text-2xl font-bold text-white">0</span>
+          <span class="text-xs text-slate-500">records</span>
+        </div>
+        <div class="text-[11px] text-slate-500 mt-1">std::pair&lt;K, V&gt;</div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+        <div class="text-xs text-slate-400 font-medium">LOAD FACTOR (α)</div>
+        <div class="flex items-baseline justify-between mt-1">
+          <span id="metric-load" class="text-2xl font-bold text-emerald-400">0.00</span>
+          <span class="text-xs text-slate-400">/ 0.75 max</span>
+        </div>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+          <div id="load-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+        <div class="text-xs text-slate-400 font-medium">DURABILITY ENGINE</div>
+        <div class="flex items-baseline justify-between mt-1">
+          <span id="metric-wal" class="text-lg font-bold text-amber-400">WAL ACTIVE</span>
+          <span class="text-xs text-emerald-400">SYNC</span>
+        </div>
+        <div class="text-[11px] text-slate-500 mt-1">apexkv.log & snapshot</div>
+      </div>
+    </div>
+
+    <!-- Main Interactive Grid: Left Controls & Visualizer, Right WAL & Compactor -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Left 8 Columns: Operations & Bucket Visualizer -->
+      <div class="lg:col-span-8 space-y-6">
+
+        <!-- Command Input Box -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <h2 class="text-sm font-semibold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+              <span>⌨</span> Interactive KV Operations (CRUD)
+            </h2>
+            <div class="flex items-center gap-2 text-xs">
+              <button onclick="autoPopulateDemo()" class="px-2.5 py-1 rounded bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-700 transition">
+                ⚡ Add 12 Keys (Trigger 2x Rehash)
+              </button>
+              <button onclick="clearAllData()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                🗑 Clear All
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+            <div class="sm:col-span-4">
+              <label class="block text-xs text-slate-400 mb-1">Key (std::string)</label>
+              <input id="input-key" type="text" placeholder="e.g. user_tier" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 font-mono" />
+            </div>
+            <div class="sm:col-span-4">
+              <label class="block text-xs text-slate-400 mb-1">Value (std::string)</label>
+              <input id="input-val" type="text" placeholder="e.g. enterprise_pro" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 font-mono" />
+            </div>
+            <div class="sm:col-span-4 flex items-end gap-2">
+              <button onclick="handlePut()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 rounded-lg text-sm shadow transition">
+                PUT
+              </button>
+              <button onclick="handleGet()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-cyan-300 font-medium py-2 rounded-lg text-sm border border-slate-700 transition">
+                GET
+              </button>
+              <button onclick="handleRemove()" class="flex-1 bg-rose-950 hover:bg-rose-900 text-rose-300 font-medium py-2 rounded-lg text-sm border border-rose-800 transition">
+                DEL
+              </button>
+            </div>
+          </div>
+
+          <!-- Hash Formula Info Line -->
+          <div id="hash-info" class="mt-3 text-xs font-mono text-slate-400 bg-slate-950/70 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between">
+            <span>Formula: <code class="text-cyan-300">std::hash&lt;Key&gt;{}(k) % capacity</code></span>
+            <span id="last-op-msg" class="text-slate-300">Ready for commands</span>
+          </div>
+        </div>
+
+        <!-- In-Memory Hash Table Bucket Visualization -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-sm font-semibold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+                <span>🧱</span> In-Memory Bucket Array & Chaining (<code class="text-slate-300 font-mono">std::forward_list</code>)
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Singly-linked collision chains with instant O(1) front insertion</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span> Empty</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> Occupied</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Collision (&gt;1)</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Bucket Grid -->
+          <div id="buckets-container" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 gap-3 max-h-[380px] overflow-y-auto custom-scrollbar p-1">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right 4 Columns: WAL Log, Snapshot & Crash Simulator -->
+      <div class="lg:col-span-4 space-y-6">
+
+        <!-- WAL Disk Stream -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col h-[400px]">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-sm font-semibold uppercase tracking-wider text-amber-400 flex items-center gap-2">
+              <span>📜</span> Write-Ahead Log (<code class="text-xs text-slate-300 font-mono">apexkv.log</code>)
+            </h2>
+            <span id="wal-count" class="text-xs text-slate-400">0 lines</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-3">Synchronous append-only mutation stream</p>
+          
+          <!-- Log Console -->
+          <div id="wal-log-view" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-xs overflow-y-auto custom-scrollbar space-y-1 text-slate-300">
+            <div class="text-slate-600">// apexkv.log initialized</div>
+          </div>
+
+          <div class="mt-3 flex gap-2">
+            <button onclick="saveSnapshot()" class="flex-1 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs shadow transition flex items-center justify-center gap-1">
+              📸 Save Snapshot & Compact
+            </button>
+          </div>
+        </div>
+
+        <!-- Crash & Replay Recovery Simulator -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-rose-400 flex items-center gap-2 mb-1">
+            <span>💥</span> Crash Recovery Simulator
+          </h2>
+          <p class="text-xs text-slate-400 mb-4">Simulate abrupt process crash (SIGKILL) & test automatic state restoration</p>
+
+          <div class="space-y-3">
+            <button onclick="simulateCrashAndRecover()" class="w-full py-2.5 rounded-lg bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-bold text-xs shadow-lg transition">
+              ⚡ Kill Process & Trigger WAL Replay
+            </button>
+
+            <div id="recovery-status" class="hidden p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono space-y-1">
+              <div class="text-rose-400">⚠ SIMULATED PROCESS CRASH!</div>
+              <div class="text-slate-400">1. In-memory RAM wiped to 0.</div>
+              <div id="rec-snap-step" class="text-indigo-400">2. Checking snapshot baseline...</div>
+              <div id="rec-wal-step" class="text-amber-400">3. Replaying WAL mutations...</div>
+              <div class="text-emerald-400 font-bold">✔ 100% State Consistently Restored!</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 py-4 px-6 text-center text-xs text-slate-500">
+    ApexKV Storage Engine &bull; Team The Optimizer &bull; Track D: Data & Storage &bull; <a href="https://github.com/Tanish75/ApexKV" class="text-cyan-400 hover:underline">github.com/Tanish75/ApexKV</a>
+  </footer>
+
+  <!-- JAVASCRIPT ENGINE & LOGIC SIMULATOR -->
+  <script>
+    class ApexKVMirror {
+      constructor(initialCap = 16, maxLoad = 0.75) {
+        this.capacity = initialCap;
+        this.maxLoadFactor = maxLoad;
+        this.size = 0;
+        this.buckets = Array.from({ length: this.capacity }, () => []);
+        this.wal = [];
+        this.snapshot = {};
+      }
+
+      hash(key) {
+        let h = 0;
+        for (let i = 0; i < key.length; i++) {
+          h = ((h << 5) - h) + key.charCodeAt(i);
+          h |= 0;
+        }
+        return Math.abs(h) % this.capacity;
+      }
+
+      rehash() {
+        const newCap = this.capacity * 2;
+        const newBuckets = Array.from({ length: newCap }, () => []);
+        for (let i = 0; i < this.capacity; i++) {
+          for (const item of this.buckets[i]) {
+            let h = 0;
+            for (let j = 0; j < item.key.length; j++) {
+              h = ((h << 5) - h) + item.key.charCodeAt(j);
+              h |= 0;
+            }
+            const idx = Math.abs(h) % newCap;
+            newBuckets[idx].unshift(item);
+          }
+        }
+        this.buckets = newBuckets;
+        this.capacity = newCap;
+      }
+
+      put(key, value) {
+        const index = this.hash(key);
+        const bucket = this.buckets[index];
+        for (let item of bucket) {
+          if (item.key === key) {
+            item.value = value;
+            this.wal.push({ op: 'PUT', key, value, ts: new Date().toLocaleTimeString() });
+            return { updated: true, index };
+          }
+        }
+        bucket.unshift({ key, value });
+        this.size++;
+        this.wal.push({ op: 'PUT', key, value, ts: new Date().toLocaleTimeString() });
+
+        let rehashed = false;
+        if ((this.size / this.capacity) > this.maxLoadFactor) {
+          this.rehash();
+          rehashed = true;
+        }
+        return { updated: false, index, rehashed };
+      }
+
+      get(key) {
+        const index = this.hash(key);
+        const bucket = this.buckets[index];
+        for (let item of bucket) {
+          if (item.key === key) return { found: true, value: item.value, index };
+        }
+        return { found: false, index };
+      }
+
+      remove(key) {
+        const index = this.hash(key);
+        const bucket = this.buckets[index];
+        const initialLen = bucket.length;
+        this.buckets[index] = bucket.filter(item => item.key !== key);
+        if (this.buckets[index].length < initialLen) {
+          this.size--;
+          this.wal.push({ op: 'DEL', key, ts: new Date().toLocaleTimeString() });
+          return { removed: true, index };
+        }
+        return { removed: false, index };
+      }
+
+      saveSnapshot() {
+        const flat = {};
+        for (let b of this.buckets) {
+          for (let item of b) {
+            flat[item.key] = item.value;
+          }
+        }
+        this.snapshot = flat;
+        this.wal = [];
+      }
+    }
+
+    const kv = new ApexKVMirror(16, 0.75);
+
+    function renderBuckets(activeIdx = null) {
+      const container = document.getElementById('buckets-container');
+      container.innerHTML = '';
+
+      for (let i = 0; i < kv.capacity; i++) {
+        const chain = kv.buckets[i];
+        const isCollision = chain.length > 1;
+        const isActive = (activeIdx === i);
+
+        let borderClass = 'border-slate-800 bg-slate-950/60';
+        if (chain.length > 0) borderClass = 'border-cyan-900/60 bg-cyan-950/20';
+        if (isCollision) borderClass = 'border-amber-900/60 bg-amber-950/20';
+        if (isActive) borderClass += ' bucket-active';
+
+        const bCard = document.createElement('div');
+        bCard.className = `p-3 rounded-xl border ${borderClass} transition-all duration-200`;
+
+        bCard.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-mono font-bold ${chain.length > 0 ? 'text-cyan-400' : 'text-slate-500'}">
+              Bucket [${i}]
+            </span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded ${chain.length > 0 ? (isCollision ? 'bg-amber-900/60 text-amber-300' : 'bg-cyan-900/60 text-cyan-300') : 'bg-slate-800 text-slate-500'}">
+              ${chain.length} node${chain.length === 1 ? '' : 's'}
+            </span>
+          </div>
+          <div class="space-y-1.5 min-h-[32px]">
+            ${chain.length === 0 ? '<div class="text-[11px] text-slate-600 italic">nullptr (empty)</div>' : ''}
+            ${chain.map((item, idx) => `
+              <div class="p-1.5 rounded bg-slate-900 border border-slate-700 text-xs font-mono flex items-center justify-between">
+                <span class="text-white font-semibold truncate max-w-[70px]">${item.key}</span>
+                <span class="text-cyan-400 text-[11px] truncate max-w-[70px]">"${item.value}"</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(bCard);
+      }
+
+      document.getElementById('metric-capacity').textContent = kv.capacity;
+      document.getElementById('metric-size').textContent = kv.size;
+      const loadVal = (kv.size / kv.capacity).toFixed(2);
+      document.getElementById('metric-load').textContent = loadVal;
+      const loadPercent = Math.min(100, (loadVal / 0.75) * 100);
+      const loadBar = document.getElementById('load-bar');
+      loadBar.style.width = `${loadPercent}%`;
+      if (loadVal > 0.6) loadBar.className = 'bg-amber-500 h-full rounded-full transition-all duration-300';
+      else loadBar.className = 'bg-emerald-500 h-full rounded-full transition-all duration-300';
+
+      const walView = document.getElementById('wal-log-view');
+      document.getElementById('wal-count').textContent = `${kv.wal.length} lines logged`;
+      if (kv.wal.length === 0) {
+        walView.innerHTML = '<div class="text-slate-600">// Log compacted / clean</div>';
+      } else {
+        walView.innerHTML = kv.wal.map(e => `
+          <div class="flex items-center justify-between py-0.5 border-b border-slate-900/60">
+            <span class="${e.op === 'PUT' ? 'text-cyan-400' : 'text-rose-400'} font-bold">${e.op} ${e.key} ${e.value ? e.value : ''}</span>
+            <span class="text-[10px] text-slate-500">${e.ts}</span>
+          </div>
+        `).join('');
+        walView.scrollTop = walView.scrollHeight;
+      }
+    }
+
+    function handlePut() {
+      const k = document.getElementById('input-key').value.trim();
+      const v = document.getElementById('input-val').value.trim();
+      if (!k) return alert('Please specify a Key!');
+      const res = kv.put(k, v || 'val_' + Math.floor(Math.random()*100));
+      const msg = res.rehashed ? `PUT "${k}" & triggered 2x REHASH to capacity ${kv.capacity}!` : (res.updated ? `Updated key "${k}" in Bucket [${res.index}]` : `Inserted key "${k}" into Bucket [${res.index}]`);
+      document.getElementById('last-op-msg').textContent = msg;
+      renderBuckets(res.index);
+    }
+
+    function handleGet() {
+      const k = document.getElementById('input-key').value.trim();
+      if (!k) return alert('Please specify a Key to lookup!');
+      const res = kv.get(k);
+      if (res.found) {
+        document.getElementById('last-op-msg').innerHTML = `<span class="text-emerald-400">FOUND "${k}" = "${res.value}" in Bucket [${res.index}]</span>`;
+      } else {
+        document.getElementById('last-op-msg').innerHTML = `<span class="text-rose-400">MISS: Key "${k}" not found in Bucket [${res.index}]</span>`;
+      }
+      renderBuckets(res.index);
+    }
+
+    function handleRemove() {
+      const k = document.getElementById('input-key').value.trim();
+      if (!k) return alert('Please specify a Key to remove!');
+      const res = kv.remove(k);
+      if (res.removed) {
+        document.getElementById('last-op-msg').innerHTML = `<span class="text-amber-400">REMOVED "${k}" from Bucket [${res.index}]</span>`;
+      } else {
+        document.getElementById('last-op-msg').innerHTML = `<span class="text-slate-400">Cannot remove: Key "${k}" not found</span>`;
+      }
+      renderBuckets(res.index);
+    }
+
+    function autoPopulateDemo() {
+      const sample = [
+        ["user_1", "Alice"], ["session_id", "xyz99"], ["city", "Mumbai"],
+        ["theme", "dark"], ["rate_limit", "1000"], ["db_host", "127.0.0.1"],
+        ["auth_token", "jwt_token_99"], ["app_mode", "production"], ["version", "v1.0.2"],
+        ["cache_ttl", "3600"], ["user_2", "Bob"], ["lang", "cpp17"],
+        ["region", "asia-south1"], ["cluster_id", "node-4"]
+      ];
+      for (const [k, v] of sample) {
+        kv.put(k, v);
+      }
+      document.getElementById('last-op-msg').textContent = `Auto-populated 14 items! Load triggered 2x dynamic rehash.`;
+      renderBuckets();
+    }
+
+    function clearAllData() {
+      kv.capacity = 16;
+      kv.size = 0;
+      kv.buckets = Array.from({ length: 16 }, () => []);
+      kv.wal = [];
+      kv.snapshot = {};
+      document.getElementById('last-op-msg').textContent = `Cleared in-memory table and log.`;
+      renderBuckets();
+    }
+
+    function saveSnapshot() {
+      kv.saveSnapshot();
+      document.getElementById('last-op-msg').textContent = `Saved point-in-time snapshot & compacted WAL!`;
+      renderBuckets();
+    }
+
+    function simulateCrashAndRecover() {
+      const statusBox = document.getElementById('recovery-status');
+      statusBox.classList.remove('hidden');
+
+      const diskSnapshot = { ...kv.snapshot };
+      const diskWal = [ ...kv.wal ];
+
+      kv.capacity = 16;
+      kv.size = 0;
+      kv.buckets = Array.from({ length: 16 }, () => []);
+      renderBuckets();
+
+      setTimeout(() => {
+        for (const [k, v] of Object.entries(diskSnapshot)) {
+          kv.put(k, v);
+        }
+        renderBuckets();
+      }, 500);
+
+      setTimeout(() => {
+        for (const entry of diskWal) {
+          if (entry.op === 'PUT') kv.put(entry.key, entry.value);
+          else if (entry.op === 'DEL') kv.remove(entry.key);
+        }
+        renderBuckets();
+      }, 1000);
+    }
+
+    renderBuckets();
+  </script>
+</body>
+</html>

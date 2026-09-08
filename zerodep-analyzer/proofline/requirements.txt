@@ -1,0 +1,2 @@
+# no packages — stdlib only
+# Zero Dependency Hackathon submission

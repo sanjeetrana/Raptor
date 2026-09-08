@@ -1,0 +1,12 @@
+[1m
+  WARRANT  Compare Report[0m
+
+  Overall Trend:  [1m[33mSTAGNANT[0m[0m  (1 -> 1 risky functions)
+
+[33m  Still Open (Load-bearing & Untested):[0m
+    - src.orders.list_orders
+
+[31m  New Doc Rot Detected:[0m
+    - src.auth.validate_token (Doc Rot: logic changed but docstring wasn't updated)
+    - src.orders.super_risky (recently changed but docstring is absent or very short)
+

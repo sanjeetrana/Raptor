@@ -1,0 +1,14 @@
+track = "A"
+pitch = "An offline supply-chain auditor for dependency lockfiles that has no dependencies."
+language = "Rust"
+edition = "2021"
+entrypoint = "src/main.rs"
+build = "make"
+run = "./stranger audit package-lock.json"
+test = "make test"
+
+[bonus]
+single_file = true
+reproducible_build = true
+package_killer = "serde_json"
+stdlib_log = true

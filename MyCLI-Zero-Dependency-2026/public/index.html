@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
+  <title>MyCLI — Windows Control Center</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toast-region" aria-live="polite"></div>
+  <div class="app-shell" id="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-mark">&gt;_</span><span>MYCLI</span><small>CONTROL CENTER</small></div>
+      <nav class="nav" aria-label="Primary navigation">
+        <button class="nav-item active" data-view="home"><span>⌂</span> Home</button>
+        <button class="nav-item" data-view="files"><span>▣</span> Files</button>
+        <button class="nav-item" data-view="terminal"><span>›_</span> Terminal</button>
+        <button class="nav-item" data-view="command-center"><span>≡</span> Command Center</button>
+        <div class="nav-label">SYSTEM</div>
+        <button class="nav-item" data-view="os-manager"><span>◈</span> OS Manager</button>
+        <button class="nav-item" data-view="processes"><span>●</span> Processes</button>
+        <button class="nav-item" data-view="services"><span>⚙</span> Services</button>
+        <button class="nav-item" data-view="startup"><span>↗</span> Startup</button>
+        <button class="nav-item" data-view="storage"><span>▰</span> Storage</button>
+        <button class="nav-item" data-view="network"><span>⌁</span> Network</button>
+        <button class="nav-item" data-view="health"><span>♥</span> System Health</button>
+        <div class="nav-label">TOOLS</div>
+        <button class="nav-item" data-view="apps"><span>▦</span> Applications</button>
+        <button class="nav-item" data-view="installer"><span>＋</span> App Installer</button>
+        <button class="nav-item" data-view="automation"><span>⚡</span> Automation</button>
+        <button class="nav-item" data-view="plugins"><span>⌘</span> Plugins</button>
+        <div class="nav-label">SECURITY</div>
+        <button class="nav-item" data-view="activity"><span>▤</span> Activity Log</button>
+        <button class="nav-item" data-view="settings"><span>⚙</span> Settings</button>
+      </nav>
+      <div class="sidebar-footer"><span class="status-dot"></span><span id="connection-status">Local Windows session</span></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn mobile-menu" id="mobile-menu" title="Toggle navigation">☰</button>
+        <div class="top-title"><span id="view-kicker">WORKSPACE</span><strong id="view-title">Home Dashboard</strong></div>
+        <div class="top-actions"><button class="icon-btn" id="push-state" title="Push current state">⇧</button><button class="icon-btn" id="pop-state" title="Pop previous state">⇩</button><button class="icon-btn" id="theme-toggle" title="Toggle theme">◐</button></div>
+      </header>
+      <div class="quickbar">
+        <button data-view="files">▣ Files</button><button data-view="terminal">›_ Terminal</button><button data-view="apps">▦ Apps</button><button data-view="os-manager">◈ System</button><button data-view="processes">● Processes</button><button data-view="network">⌁ Network</button><button data-view="storage">▰ Storage</button><button data-view="health">♥ Health</button>
+      </div>
+      <section class="content" id="content" tabindex="0">
+        <div class="view active" data-view-panel="home">
+          <div class="hero"><div><div class="eyebrow">LOCAL WINDOWS WORKSPACE</div><h1>Operate clearly.<br><span>Control safely.</span></h1><p>One lightweight control center for files, shells, processes, services, storage, network tools, and diagnostics.</p></div><div class="hero-orbit"><div class="orbit-core">&gt;_</div></div></div>
+          <div class="section-heading"><div><span class="eyebrow">QUICK ACTIONS</span><h2>Windows at a glance</h2></div><span class="muted" id="home-time"></span></div>
+          <div class="dashboard-grid">
+            <button class="action-card cyan" data-view="files"><span class="action-icon">▣</span><b>File Manager</b><small>Browse, organize, and inspect your drives</small></button>
+            <button class="action-card green" data-view="terminal"><span class="action-icon">›_</span><b>Real Terminal</b><small>Run CMD or PowerShell with live output</small></button>
+            <button class="action-card purple" data-view="apps"><span class="action-icon">▦</span><b>Applications</b><small>Inspect installed software and winget</small></button>
+            <button class="action-card amber" data-view="os-manager"><span class="action-icon">◈</span><b>OS Manager</b><small>System information and Windows tools</small></button>
+            <button class="action-card blue" data-view="processes"><span class="action-icon">●</span><b>Processes</b><small>Review and safely terminate processes</small></button>
+            <button class="action-card teal" data-view="health"><span class="action-icon">♥</span><b>System Health</b><small>CPU, memory, uptime, and diagnostics</small></button>
+          </div>
+          <div class="two-col"><div class="panel"><div class="panel-title"><span>Recent commands</span><button class="link-btn" data-view="command-center">Open center</button></div><div id="home-history" class="compact-list"></div></div><div class="panel"><div class="panel-title"><span>Activity</span><button class="link-btn" data-view="activity">View log</button></div><div id="home-activity" class="compact-list"></div></div></div>
+        </div>
+
+        <div class="view" data-view-panel="files">
+          <div class="view-header"><div><span class="eyebrow">FILESYSTEM</span><h1>File Manager</h1></div><div class="view-actions"><button class="primary" id="choose-folder">Choose folder</button><button id="files-refresh">Refresh</button></div></div>
+          <div class="breadcrumb" id="breadcrumb"></div>
+          <div class="file-toolbar"><button id="new-file">＋ New file</button><button id="new-folder">＋ New folder</button><button id="file-open">Open</button><button id="file-rename">Rename</button><button id="file-copy">Copy</button><button id="file-cut">Cut</button><button id="file-paste">Paste</button><button id="file-move">Move</button><button class="danger" id="file-delete">Delete</button><button id="file-properties">Properties</button><button id="file-terminal">Open in terminal</button><label class="search-box">⌕ <input id="file-search" placeholder="Search this folder" /></label><select id="file-sort"><option value="name">Name</option><option value="type">Type</option><option value="size">Size</option><option value="modified">Modified</option></select></div>
+          <div class="file-layout"><div class="places panel"><div class="panel-title">Locations</div><button data-place="home">Home</button><button data-place="desktop">Desktop</button><button data-place="documents">Documents</button><button data-place="downloads">Downloads</button><button data-place="root">System drive</button><div class="panel-title spaced">Drive shortcuts</div><div id="drive-places"></div></div><div class="file-panel panel"><div class="table-head"><span>Name</span><span>Type</span><span>Size</span><span>Modified</span></div><div id="file-list" class="file-list"></div><div class="statusbar" id="file-status">No folder selected</div></div></div>
+        </div>
+
+        <div class="view" data-view-panel="terminal">
+          <div class="view-header"><div><span class="eyebrow">NATIVE SHELL</span><h1>Terminal</h1></div><div class="view-actions"><button id="new-terminal">＋ New session</button><button id="terminal-clear">Clear</button><button id="terminal-stop" class="danger">Stop</button></div></div>
+          <div class="terminal-toolbar"><select id="shell-select"><option value="powershell">PowerShell</option><option value="cmd">Command Prompt</option></select><select id="terminal-session-select"></select><button id="terminal-copy">Copy output</button><button id="terminal-select-all">Select all</button><button id="terminal-open-folder">Open folder</button><span class="terminal-cwd" id="terminal-cwd"></span></div>
+          <div class="terminal-window"><div class="terminal-output" id="terminal-output" tabindex="0"></div><form class="terminal-input-row" id="terminal-form"><span id="prompt-label">PS&gt;</span><input id="terminal-input" autocomplete="off" spellcheck="false" aria-label="Terminal command" placeholder="Type a real Windows command…" /><button class="primary" type="submit">Run</button></form></div>
+          <div class="terminal-note">Commands execute on the local Windows system. Output, errors, exit codes, and working directories are recorded in Command Center.</div>
+        </div>
+
+        <div class="view" data-view-panel="command-center">
+          <div class="view-header"><div><span class="eyebrow">AUDITABLE EXECUTION</span><h1>Command Center</h1></div><div class="view-actions"><button id="history-export">Export</button><button id="history-clear" class="danger">Clear history</button></div></div>
+          <div class="list-toolbar"><label class="search-box wide">⌕ <input id="history-search" placeholder="Search commands, output, or folders" /></label></div><div id="history-list" class="history-list"></div>
+        </div>
+
+        <div class="view" data-view-panel="os-manager"><div class="view-header"><div><span class="eyebrow">WINDOWS CONTROL</span><h1>OS Manager</h1></div><button class="primary" id="system-refresh">Refresh</button></div><div id="system-info-card" class="panel data-panel"></div><div class="tool-grid" id="windows-tools"></div></div>
+        <div class="view" data-view-panel="processes"><div class="view-header"><div><span class="eyebrow">RUNTIME</span><h1>Processes</h1></div><div class="view-actions"><label class="search-box">⌕ <input id="process-search" placeholder="Filter processes" /></label><button class="primary" id="process-refresh">Refresh</button></div></div><div id="process-list" class="data-table panel"></div></div>
+        <div class="view" data-view-panel="services"><div class="view-header"><div><span class="eyebrow">WINDOWS SERVICES</span><h1>Services</h1></div><button class="primary" id="service-refresh">Refresh</button></div><div class="list-toolbar"><label class="search-box wide">⌕ <input id="service-search" placeholder="Filter services" /></label></div><div id="service-list" class="data-table panel"></div></div>
+        <div class="view" data-view-panel="startup"><div class="view-header"><div><span class="eyebrow">BOOT CONFIGURATION</span><h1>Startup</h1></div><button class="primary" id="startup-refresh">Refresh</button></div><div id="startup-list" class="data-table panel"></div></div>
+        <div class="view" data-view-panel="storage"><div class="view-header"><div><span class="eyebrow">DISKS & VOLUMES</span><h1>Storage</h1></div><div class="view-actions"><button class="primary" id="storage-refresh">Refresh</button><button id="open-diskmgmt">Disk Management</button></div></div><div id="storage-list" class="card-grid"></div><div class="panel notice">Destructive partition operations are intentionally not exposed here. Use official Windows tools only after reviewing the target and required permissions.</div></div>
+        <div class="view" data-view-panel="network"><div class="view-header"><div><span class="eyebrow">CONNECTIVITY</span><h1>Network</h1></div><button class="primary" id="network-refresh">Refresh</button></div><div class="network-actions"><button id="ping-button">Ping host</button><button id="dns-button">DNS lookup</button><button id="netstat-button">View connections</button><button id="network-diagnostics">Network diagnostics</button></div><div id="network-list" class="card-grid"></div></div>
+        <div class="view" data-view-panel="health"><div class="view-header"><div><span class="eyebrow">OBSERVABILITY</span><h1>System Health</h1></div><div class="view-actions"><button class="primary" id="health-refresh">Refresh</button><button id="health-diagnostics">Run diagnostics</button></div></div><div id="health-metrics" class="metric-grid"></div><div class="panel notice">Temperature and battery values appear only when Windows exposes reliable hardware data. Integrity checks may require administrator approval and can take time.</div><div class="health-actions"><button id="integrity-check" class="warning">Windows integrity check</button><button id="storage-check">Storage check</button></div></div>
+        <div class="view" data-view-panel="apps"><div class="view-header"><div><span class="eyebrow">SOFTWARE INVENTORY</span><h1>Applications</h1></div><div class="view-actions"><button class="primary" id="apps-refresh">Refresh</button><button id="winget-update">Update all with winget</button></div></div><label class="search-box wide">⌕ <input id="apps-search" placeholder="Search installed applications" /></label><div id="apps-list" class="card-grid"></div></div>
+        <div class="view" data-view-panel="installer"><div class="view-header"><div><span class="eyebrow">TRUSTED INSTALLATION</span><h1>App Installer</h1></div></div><div class="panel installer-panel"><p>Select an installer you trust. MyCLI never downloads or executes unknown software automatically.</p><div class="installer-row"><button class="primary" id="select-installer">Select .exe or .msi</button><span id="installer-path">No installer selected</span></div><div class="installer-row"><label>Arguments <input id="installer-args" placeholder="Optional installer arguments" /></label><label><input type="checkbox" id="installer-launch" /> Launch after installation</label></div><button id="run-installer" class="warning">Install selected package</button></div><div class="panel"><div class="panel-title">winget actions</div><div class="installer-row"><input id="winget-query" placeholder="Search or install an official package ID" /><button id="winget-search">Search</button><button id="winget-install">Install</button></div><pre id="installer-output" class="mini-output"></pre></div></div>
+        <div class="view" data-view-panel="automation"><div class="view-header"><div><span class="eyebrow">REPEATABLE TASKS</span><h1>Automation</h1></div><button id="workflow-new" class="primary">＋ New workflow</button></div><div class="panel notice">Workflows are stored locally. Safe built-in actions run through the same audited backend. Review every step before enabling a schedule.</div><div id="workflow-list" class="card-grid"></div></div>
+        <div class="view" data-view-panel="plugins"><div class="view-header"><div><span class="eyebrow">EXTENSIBILITY</span><h1>Plugins</h1></div><button id="plugin-reload" class="primary">Reload</button></div><div class="panel notice">Plugins are not executed automatically. Review their source and permissions before placing them in the local plugins folder.</div><div id="plugin-list" class="card-grid"></div></div>
+        <div class="view" data-view-panel="activity"><div class="view-header"><div><span class="eyebrow">SECURITY TRAIL</span><h1>Activity Log</h1></div><div class="view-actions"><button id="activity-export">Export</button><button id="activity-clear" class="danger">Clear log</button></div></div><label class="search-box wide">⌕ <input id="activity-search" placeholder="Search actions, targets, or results" /></label><div id="activity-list" class="history-list"></div></div>
+        <div class="view" data-view-panel="settings"><div class="view-header"><div><span class="eyebrow">PREFERENCES</span><h1>Settings</h1></div><button id="settings-save" class="primary">Save settings</button></div><div class="settings-grid panel"><label>Theme<select id="setting-theme"><option value="dark">Dark terminal</option><option value="light">Light</option></select></label><label>Default shell<select id="setting-shell"><option value="powershell">PowerShell</option><option value="cmd">Command Prompt</option></select></label><label>Default terminal directory<input id="setting-cwd" placeholder="Current Windows folder" /></label><label><input type="checkbox" id="setting-confirm" checked /> Confirm destructive actions</label><label><input type="checkbox" id="setting-notify" checked /> Show operation notifications</label></div></div>
+      </section>
+    </main>
+  </div>
+  <script src="api-client.js"></script>
+  <script src="modules/gestures.js"></script><script src="renderer.js"></script>
+</body>
+</html>

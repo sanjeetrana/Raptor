@@ -1,0 +1,808 @@
+{
+  "k1": 1.5,
+  "b": 0.75,
+  "avg_dl": 22.0,
+  "docs": {
+    "src.auth.validate_token": {
+      "body": "validate_token validate_token validate_token src.auth.validate_token token bool Validate a JWT-style token by checking its HMAC signature.\n\n    Returns True if the token is valid, False otherwise.\n    Raises ValueError for malformed tokens (wrong format).",
+      "metadata": {
+        "name": "validate_token",
+        "qualified_name": "src.auth.validate_token",
+        "file_path": "src/auth.py",
+        "line": 8,
+        "args": [
+          "token"
+        ],
+        "return_annotation": "bool",
+        "docstring": "Validate a JWT-style token by checking its HMAC signature.\n\n    Returns True if the token is valid, False otherwise.\n    Raises ValueError for malformed tokens (wrong format).",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.auth.get_current_user": {
+      "body": "get_current_user get_current_user get_current_user src.auth.get_current_user token dict Decode the token and return the user payload.\n    Calls validate_token first \u2014 raises if invalid.",
+      "metadata": {
+        "name": "get_current_user",
+        "qualified_name": "src.auth.get_current_user",
+        "file_path": "src/auth.py",
+        "line": 26,
+        "args": [
+          "token"
+        ],
+        "return_annotation": "dict",
+        "docstring": "Decode the token and return the user payload.\n    Calls validate_token first \u2014 raises if invalid.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.auth.login": {
+      "body": "login login login src.auth.login username password str Authenticate username/password and return a session token.",
+      "metadata": {
+        "name": "login",
+        "qualified_name": "src.auth.login",
+        "file_path": "src/auth.py",
+        "line": 38,
+        "args": [
+          "username",
+          "password"
+        ],
+        "return_annotation": "str",
+        "docstring": "Authenticate username/password and return a session token.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.auth.AuthService.__init__": {
+      "body": "__init__ __init__ __init__ src.auth.AuthService.__init__ AuthService",
+      "metadata": {
+        "name": "__init__",
+        "qualified_name": "src.auth.AuthService.__init__",
+        "file_path": "src/auth.py",
+        "line": 53,
+        "args": [],
+        "return_annotation": null,
+        "docstring": null,
+        "is_test": false,
+        "is_public": false
+      }
+    },
+    "src.auth.AuthService.is_authenticated": {
+      "body": "is_authenticated is_authenticated is_authenticated src.auth.AuthService.is_authenticated token bool Check if a token is authenticated. Caches results. AuthService",
+      "metadata": {
+        "name": "is_authenticated",
+        "qualified_name": "src.auth.AuthService.is_authenticated",
+        "file_path": "src/auth.py",
+        "line": 56,
+        "args": [
+          "token"
+        ],
+        "return_annotation": "bool",
+        "docstring": "Check if a token is authenticated. Caches results.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.auth.AuthService.logout": {
+      "body": "logout logout logout src.auth.AuthService.logout token None Invalidate a token from the cache. AuthService",
+      "metadata": {
+        "name": "logout",
+        "qualified_name": "src.auth.AuthService.logout",
+        "file_path": "src/auth.py",
+        "line": 64,
+        "args": [
+          "token"
+        ],
+        "return_annotation": "None",
+        "docstring": "Invalidate a token from the cache.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.orders.create_order": {
+      "body": "create_order create_order create_order src.orders.create_order token item qty dict Create a new order. Validates token before processing.\n\n    Args:\n        token: User auth token\n        item:  Product identifier\n        qty:   Quantity to order\n\n    Returns:\n        Order dict with id, item, qty, status.",
+      "metadata": {
+        "name": "create_order",
+        "qualified_name": "src.orders.create_order",
+        "file_path": "src/orders.py",
+        "line": 7,
+        "args": [
+          "token",
+          "item",
+          "qty"
+        ],
+        "return_annotation": "dict",
+        "docstring": "Create a new order. Validates token before processing.\n\n    Args:\n        token: User auth token\n        item:  Product identifier\n        qty:   Quantity to order\n\n    Returns:\n        Order dict with id, item, qty, status.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.orders.cancel_order": {
+      "body": "cancel_order cancel_order cancel_order src.orders.cancel_order token order_id bool Cancel an existing order by ID. Requires valid auth token.",
+      "metadata": {
+        "name": "cancel_order",
+        "qualified_name": "src.orders.cancel_order",
+        "file_path": "src/orders.py",
+        "line": 26,
+        "args": [
+          "token",
+          "order_id"
+        ],
+        "return_annotation": "bool",
+        "docstring": "Cancel an existing order by ID. Requires valid auth token.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.orders.list_orders": {
+      "body": "list_orders list_orders list_orders src.orders.list_orders token list Return all orders for the authenticated user.",
+      "metadata": {
+        "name": "list_orders",
+        "qualified_name": "src.orders.list_orders",
+        "file_path": "src/orders.py",
+        "line": 33,
+        "args": [
+          "token"
+        ],
+        "return_annotation": "list",
+        "docstring": "Return all orders for the authenticated user.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.orders._internal_helper": {
+      "body": "_internal_helper _internal_helper _internal_helper src.orders._internal_helper data dict Internal helper \u2014 not public API.",
+      "metadata": {
+        "name": "_internal_helper",
+        "qualified_name": "src.orders._internal_helper",
+        "file_path": "src/orders.py",
+        "line": 40,
+        "args": [
+          "data"
+        ],
+        "return_annotation": "dict",
+        "docstring": "Internal helper \u2014 not public API.",
+        "is_test": false,
+        "is_public": false
+      }
+    },
+    "src.routes.get_orders": {
+      "body": "get_orders get_orders get_orders src.routes.get_orders GET /api/orders \u2014 List orders for authenticated user.",
+      "metadata": {
+        "name": "get_orders",
+        "qualified_name": "src.routes.get_orders",
+        "file_path": "src/routes.py",
+        "line": 18,
+        "args": [],
+        "return_annotation": null,
+        "docstring": "GET /api/orders \u2014 List orders for authenticated user.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.routes.post_order": {
+      "body": "post_order post_order post_order src.routes.post_order POST /api/orders \u2014 Create a new order.",
+      "metadata": {
+        "name": "post_order",
+        "qualified_name": "src.routes.post_order",
+        "file_path": "src/routes.py",
+        "line": 26,
+        "args": [],
+        "return_annotation": null,
+        "docstring": "POST /api/orders \u2014 Create a new order.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.routes.health_check": {
+      "body": "health_check health_check health_check src.routes.health_check dict Liveness probe \u2014 always returns OK.",
+      "metadata": {
+        "name": "health_check",
+        "qualified_name": "src.routes.health_check",
+        "file_path": "src/routes.py",
+        "line": 39,
+        "args": [],
+        "return_annotation": "dict",
+        "docstring": "Liveness probe \u2014 always returns OK.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.utils.hash_password": {
+      "body": "hash_password hash_password hash_password src.utils.hash_password password str Hash a password with SHA-256. Use bcrypt in production.",
+      "metadata": {
+        "name": "hash_password",
+        "qualified_name": "src.utils.hash_password",
+        "file_path": "src/utils.py",
+        "line": 6,
+        "args": [
+          "password"
+        ],
+        "return_annotation": "str",
+        "docstring": "Hash a password with SHA-256. Use bcrypt in production.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.utils.validate_email": {
+      "body": "validate_email validate_email validate_email src.utils.validate_email email bool Check that a string is a properly formatted email address.\n    Uses a regex pattern matching the RFC 5322 simplified form.\n    Does NOT perform DNS lookup or mailbox verification.\n    Unrelated to authentication, tokens, or session management.",
+      "metadata": {
+        "name": "validate_email",
+        "qualified_name": "src.utils.validate_email",
+        "file_path": "src/utils.py",
+        "line": 11,
+        "args": [
+          "email"
+        ],
+        "return_annotation": "bool",
+        "docstring": "Check that a string is a properly formatted email address.\n    Uses a regex pattern matching the RFC 5322 simplified form.\n    Does NOT perform DNS lookup or mailbox verification.\n    Unrelated to authentication, tokens, or session management.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.utils.slugify": {
+      "body": "slugify slugify slugify src.utils.slugify text str Convert text to URL-friendly slug.",
+      "metadata": {
+        "name": "slugify",
+        "qualified_name": "src.utils.slugify",
+        "file_path": "src/utils.py",
+        "line": 22,
+        "args": [
+          "text"
+        ],
+        "return_annotation": "str",
+        "docstring": "Convert text to URL-friendly slug.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "src.utils.paginate": {
+      "body": "paginate paginate paginate src.utils.paginate items page per_page dict Paginate a list and return page metadata.",
+      "metadata": {
+        "name": "paginate",
+        "qualified_name": "src.utils.paginate",
+        "file_path": "src/utils.py",
+        "line": 29,
+        "args": [
+          "items",
+          "page",
+          "per_page"
+        ],
+        "return_annotation": "dict",
+        "docstring": "Paginate a list and return page metadata.",
+        "is_test": false,
+        "is_public": true
+      }
+    },
+    "tests.test_auth.TestValidateToken.test_validate_token_malformed": {
+      "body": "test_validate_token_malformed test_validate_token_malformed test_validate_token_malformed tests.test_auth.TestValidateToken.test_validate_token_malformed Malformed tokens must raise ValueError. TestValidateToken",
+      "metadata": {
+        "name": "test_validate_token_malformed",
+        "qualified_name": "tests.test_auth.TestValidateToken.test_validate_token_malformed",
+        "file_path": "tests/test_auth.py",
+        "line": 11,
+        "args": [],
+        "return_annotation": null,
+        "docstring": "Malformed tokens must raise ValueError.",
+        "is_test": true,
+        "is_public": true
+      }
+    },
+    "tests.test_auth.TestValidateToken.test_validate_token_wrong_parts": {
+      "body": "test_validate_token_wrong_parts test_validate_token_wrong_parts test_validate_token_wrong_parts tests.test_auth.TestValidateToken.test_validate_token_wrong_parts TestValidateToken",
+      "metadata": {
+        "name": "test_validate_token_wrong_parts",
+        "qualified_name": "tests.test_auth.TestValidateToken.test_validate_token_wrong_parts",
+        "file_path": "tests/test_auth.py",
+        "line": 16,
+        "args": [],
+        "return_annotation": null,
+        "docstring": null,
+        "is_test": true,
+        "is_public": true
+      }
+    },
+    "tests.test_auth.TestValidateToken.test_login_valid": {
+      "body": "test_login_valid test_login_valid test_login_valid tests.test_auth.TestValidateToken.test_login_valid TestValidateToken",
+      "metadata": {
+        "name": "test_login_valid",
+        "qualified_name": "tests.test_auth.TestValidateToken.test_login_valid",
+        "file_path": "tests/test_auth.py",
+        "line": 20,
+        "args": [],
+        "return_annotation": null,
+        "docstring": null,
+        "is_test": true,
+        "is_public": true
+      }
+    },
+    "tests.test_auth.TestValidateToken.test_login_invalid": {
+      "body": "test_login_invalid test_login_invalid test_login_invalid tests.test_auth.TestValidateToken.test_login_invalid TestValidateToken",
+      "metadata": {
+        "name": "test_login_invalid",
+        "qualified_name": "tests.test_auth.TestValidateToken.test_login_invalid",
+        "file_path": "tests/test_auth.py",
+        "line": 25,
+        "args": [],
+        "return_annotation": null,
+        "docstring": null,
+        "is_test": true,
+        "is_public": true
+      }
+    },
+    "tests.test_auth.TestValidateToken.test_auth_service_caches": {
+      "body": "test_auth_service_caches test_auth_service_caches test_auth_service_caches tests.test_auth.TestValidateToken.test_auth_service_caches TestValidateToken",
+      "metadata": {
+        "name": "test_auth_service_caches",
+        "qualified_name": "tests.test_auth.TestValidateToken.test_auth_service_caches",
+        "file_path": "tests/test_auth.py",
+        "line": 29,
+        "args": [],
+        "return_annotation": null,
+        "docstring": null,
+        "is_test": true,
+        "is_public": true
+      }
+    },
+    "tests.test_orders.TestOrders.test_create_order_bad_qty": {
+      "body": "test_create_order_bad_qty test_create_order_bad_qty test_create_order_bad_qty tests.test_orders.TestOrders.test_create_order_bad_qty Zero quantity must raise ValueError. TestOrders",
+      "metadata": {
+        "name": "test_create_order_bad_qty",
+        "qualified_name": "tests.test_orders.TestOrders.test_create_order_bad_qty",
+        "file_path": "tests/test_orders.py",
+        "line": 9,
+        "args": [],
+        "return_annotation": null,
+        "docstring": "Zero quantity must raise ValueError.",
+        "is_test": true,
+        "is_public": true
+      }
+    },
+    "tests.test_orders.TestOrders.test_cancel_order_bad_token": {
+      "body": "test_cancel_order_bad_token test_cancel_order_bad_token test_cancel_order_bad_token tests.test_orders.TestOrders.test_cancel_order_bad_token TestOrders",
+      "metadata": {
+        "name": "test_cancel_order_bad_token",
+        "qualified_name": "tests.test_orders.TestOrders.test_cancel_order_bad_token",
+        "file_path": "tests/test_orders.py",
+        "line": 16,
+        "args": [],
+        "return_annotation": null,
+        "docstring": null,
+        "is_test": true,
+        "is_public": true
+      }
+    }
+  },
+  "tf": {
+    "src.auth.validate_token": {
+      "validate": 5,
+      "token": 7,
+      "src": 1,
+      "auth": 1,
+      "bool": 1,
+      "jwt": 1,
+      "style": 1,
+      "checking": 1,
+      "hmac": 1,
+      "signature": 1,
+      "returns": 1,
+      "true": 1,
+      "valid": 1,
+      "false": 1,
+      "otherwise": 1,
+      "raises": 1,
+      "value": 1,
+      "error": 1,
+      "malformed": 1,
+      "tokens": 1,
+      "wrong": 1,
+      "format": 1
+    },
+    "src.auth.get_current_user": {
+      "get": 4,
+      "current": 4,
+      "user": 5,
+      "src": 1,
+      "auth": 1,
+      "token": 3,
+      "dict": 1,
+      "decode": 1,
+      "return": 1,
+      "payload": 1,
+      "calls": 1,
+      "validate": 1,
+      "first": 1,
+      "raises": 1,
+      "invalid": 1
+    },
+    "src.auth.login": {
+      "login": 4,
+      "src": 1,
+      "auth": 1,
+      "username": 2,
+      "password": 2,
+      "str": 1,
+      "authenticate": 1,
+      "return": 1,
+      "session": 1,
+      "token": 1
+    },
+    "src.auth.AuthService.__init__": {
+      "init": 4,
+      "src": 1,
+      "auth": 3,
+      "service": 2
+    },
+    "src.auth.AuthService.is_authenticated": {
+      "authenticated": 5,
+      "src": 1,
+      "auth": 3,
+      "service": 2,
+      "token": 2,
+      "bool": 1,
+      "check": 1,
+      "caches": 1,
+      "results": 1
+    },
+    "src.auth.AuthService.logout": {
+      "logout": 4,
+      "src": 1,
+      "auth": 3,
+      "service": 2,
+      "token": 2,
+      "none": 1,
+      "invalidate": 1,
+      "cache": 1
+    },
+    "src.orders.create_order": {
+      "create": 5,
+      "order": 7,
+      "src": 1,
+      "orders": 1,
+      "token": 4,
+      "item": 3,
+      "qty": 3,
+      "dict": 2,
+      "new": 1,
+      "validates": 1,
+      "before": 1,
+      "processing": 1,
+      "args": 1,
+      "user": 1,
+      "auth": 1,
+      "product": 1,
+      "identifier": 1,
+      "quantity": 1,
+      "returns": 1,
+      "id": 1,
+      "status": 1
+    },
+    "src.orders.cancel_order": {
+      "cancel": 5,
+      "order": 6,
+      "src": 1,
+      "orders": 1,
+      "token": 2,
+      "id": 2,
+      "bool": 1,
+      "existing": 1,
+      "requires": 1,
+      "valid": 1,
+      "auth": 1
+    },
+    "src.orders.list_orders": {
+      "list": 5,
+      "orders": 6,
+      "src": 1,
+      "token": 1,
+      "return": 1,
+      "all": 1,
+      "authenticated": 1,
+      "user": 1
+    },
+    "src.orders._internal_helper": {
+      "internal": 5,
+      "helper": 5,
+      "src": 1,
+      "orders": 1,
+      "data": 1,
+      "dict": 1,
+      "public": 1,
+      "api": 1
+    },
+    "src.routes.get_orders": {
+      "get": 5,
+      "orders": 6,
+      "src": 1,
+      "routes": 1,
+      "api": 1,
+      "list": 1,
+      "authenticated": 1,
+      "user": 1
+    },
+    "src.routes.post_order": {
+      "post": 5,
+      "order": 5,
+      "src": 1,
+      "routes": 1,
+      "api": 1,
+      "orders": 1,
+      "create": 1,
+      "new": 1
+    },
+    "src.routes.health_check": {
+      "health": 4,
+      "check": 4,
+      "src": 1,
+      "routes": 1,
+      "dict": 1,
+      "liveness": 1,
+      "probe": 1,
+      "always": 1,
+      "returns": 1,
+      "ok": 1
+    },
+    "src.utils.hash_password": {
+      "hash": 5,
+      "password": 6,
+      "src": 1,
+      "utils": 1,
+      "str": 1,
+      "sha": 1,
+      "256": 1,
+      "use": 1,
+      "bcrypt": 1,
+      "production": 1
+    },
+    "src.utils.validate_email": {
+      "validate": 4,
+      "email": 6,
+      "src": 1,
+      "utils": 1,
+      "bool": 1,
+      "check": 1,
+      "string": 1,
+      "properly": 1,
+      "formatted": 1,
+      "address": 1,
+      "uses": 1,
+      "regex": 1,
+      "pattern": 1,
+      "matching": 1,
+      "rfc": 1,
+      "5322": 1,
+      "simplified": 1,
+      "form": 1,
+      "perform": 1,
+      "dns": 1,
+      "lookup": 1,
+      "mailbox": 1,
+      "verification": 1,
+      "unrelated": 1,
+      "authentication": 1,
+      "tokens": 1,
+      "session": 1,
+      "management": 1
+    },
+    "src.utils.slugify": {
+      "slugify": 4,
+      "src": 1,
+      "utils": 1,
+      "text": 2,
+      "str": 1,
+      "convert": 1,
+      "url": 1,
+      "friendly": 1,
+      "slug": 1
+    },
+    "src.utils.paginate": {
+      "paginate": 5,
+      "src": 1,
+      "utils": 1,
+      "items": 1,
+      "page": 3,
+      "per": 1,
+      "dict": 1,
+      "list": 1,
+      "return": 1,
+      "metadata": 1
+    },
+    "tests.test_auth.TestValidateToken.test_validate_token_malformed": {
+      "test": 7,
+      "validate": 6,
+      "token": 6,
+      "malformed": 5,
+      "tests": 1,
+      "auth": 1,
+      "tokens": 1,
+      "raise": 1,
+      "value": 1,
+      "error": 1
+    },
+    "tests.test_auth.TestValidateToken.test_validate_token_wrong_parts": {
+      "test": 7,
+      "validate": 6,
+      "token": 6,
+      "wrong": 4,
+      "parts": 4,
+      "tests": 1,
+      "auth": 1
+    },
+    "tests.test_auth.TestValidateToken.test_login_valid": {
+      "test": 7,
+      "login": 4,
+      "valid": 4,
+      "tests": 1,
+      "auth": 1,
+      "validate": 2,
+      "token": 2
+    },
+    "tests.test_auth.TestValidateToken.test_login_invalid": {
+      "test": 7,
+      "login": 4,
+      "invalid": 4,
+      "tests": 1,
+      "auth": 1,
+      "validate": 2,
+      "token": 2
+    },
+    "tests.test_auth.TestValidateToken.test_auth_service_caches": {
+      "test": 7,
+      "auth": 5,
+      "service": 4,
+      "caches": 4,
+      "tests": 1,
+      "validate": 2,
+      "token": 2
+    },
+    "tests.test_orders.TestOrders.test_create_order_bad_qty": {
+      "test": 7,
+      "create": 4,
+      "order": 4,
+      "bad": 4,
+      "qty": 4,
+      "tests": 1,
+      "orders": 3,
+      "zero": 1,
+      "quantity": 1,
+      "raise": 1,
+      "value": 1,
+      "error": 1
+    },
+    "tests.test_orders.TestOrders.test_cancel_order_bad_token": {
+      "test": 7,
+      "cancel": 4,
+      "order": 4,
+      "bad": 4,
+      "token": 4,
+      "tests": 1,
+      "orders": 3
+    }
+  },
+  "df": {
+    "tokens": 3,
+    "error": 3,
+    "valid": 3,
+    "token": 14,
+    "checking": 1,
+    "format": 1,
+    "bool": 4,
+    "false": 1,
+    "wrong": 2,
+    "returns": 3,
+    "jwt": 1,
+    "signature": 1,
+    "malformed": 2,
+    "raises": 2,
+    "auth": 13,
+    "otherwise": 1,
+    "style": 1,
+    "src": 17,
+    "true": 1,
+    "value": 3,
+    "validate": 8,
+    "hmac": 1,
+    "return": 4,
+    "current": 1,
+    "user": 4,
+    "payload": 1,
+    "first": 1,
+    "calls": 1,
+    "dict": 5,
+    "invalid": 2,
+    "get": 2,
+    "decode": 1,
+    "session": 2,
+    "username": 1,
+    "str": 3,
+    "login": 3,
+    "authenticate": 1,
+    "password": 2,
+    "init": 1,
+    "service": 4,
+    "authenticated": 3,
+    "check": 3,
+    "results": 1,
+    "caches": 2,
+    "cache": 1,
+    "invalidate": 1,
+    "none": 1,
+    "logout": 1,
+    "qty": 2,
+    "id": 2,
+    "item": 1,
+    "order": 5,
+    "identifier": 1,
+    "status": 1,
+    "quantity": 2,
+    "before": 1,
+    "validates": 1,
+    "new": 2,
+    "product": 1,
+    "processing": 1,
+    "create": 3,
+    "args": 1,
+    "orders": 8,
+    "existing": 1,
+    "cancel": 2,
+    "requires": 1,
+    "list": 3,
+    "all": 1,
+    "data": 1,
+    "helper": 1,
+    "public": 1,
+    "api": 3,
+    "internal": 1,
+    "routes": 3,
+    "post": 1,
+    "ok": 1,
+    "health": 1,
+    "always": 1,
+    "liveness": 1,
+    "probe": 1,
+    "256": 1,
+    "bcrypt": 1,
+    "sha": 1,
+    "utils": 4,
+    "production": 1,
+    "use": 1,
+    "hash": 1,
+    "address": 1,
+    "perform": 1,
+    "pattern": 1,
+    "properly": 1,
+    "email": 1,
+    "mailbox": 1,
+    "unrelated": 1,
+    "management": 1,
+    "string": 1,
+    "simplified": 1,
+    "dns": 1,
+    "form": 1,
+    "formatted": 1,
+    "authentication": 1,
+    "uses": 1,
+    "matching": 1,
+    "verification": 1,
+    "rfc": 1,
+    "regex": 1,
+    "lookup": 1,
+    "5322": 1,
+    "friendly": 1,
+    "text": 1,
+    "url": 1,
+    "convert": 1,
+    "slug": 1,
+    "slugify": 1,
+    "paginate": 1,
+    "items": 1,
+    "per": 1,
+    "metadata": 1,
+    "page": 1,
+    "tests": 7,
+    "test": 7,
+    "raise": 2,
+    "parts": 1,
+    "zero": 1,
+    "bad": 2
+  }
+}

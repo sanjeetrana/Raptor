@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / IDE files
+.env
+.idea/
+.vscode/
+.DS_Store
+
+# Storage/WAL runtime files
+*.wal

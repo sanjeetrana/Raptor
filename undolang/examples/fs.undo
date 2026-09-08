@@ -1,0 +1,69 @@
+# One program can contain many named transactions. Run a single scenario with
+# --transaction NAME, or run this file from a clean root to see fail-fast:
+# seed-fixture and first-commits commit, second-fails stops the later entries.
+
+transaction "seed-fixture" {
+  mkdir "input"
+  write "input/app-v1.txt" = "application version 1\n"
+  mkdir "config"
+  write "config/app.conf" = "schema=v1\nmode=demo\n"
+  mkdir "read-only"
+  assert is_file "input/app-v1.txt"
+  assert contains "config/app.conf" "schema=v1"
+  assert is_dir "read-only"
+}
+
+transaction "first-commits" {
+  write "first-transaction-committed.txt" = "committed before the next failure\n"
+  assert contains "first-transaction-committed.txt" "committed"
+}
+
+transaction "second-fails" {
+  require is_file "missing-for-second-transaction.txt"
+  write "should-not-exist.txt" = "unreachable\n"
+}
+
+transaction "upgrade-files" {
+  require is_file "input/app-v1.txt"
+  require contains "config/app.conf" "schema=v1"
+  copy "input/app-v1.txt" -> "input/app-v2.txt"
+  replace "config/app.conf" "schema=v1" -> "schema=v2"
+  write "VERSION" = "2\n"
+  assert is_file "input/app-v2.txt"
+  assert contains "config/app.conf" "schema=v2"
+  assert contains "VERSION" "2"
+}
+
+transaction "overwrite-current" {
+  require is_file "input/app-v2.txt"
+  copy "input/app-v2.txt" -> "input/current.txt" overwrite
+  assert contains "input/current.txt" "version 1"
+}
+
+transaction "retire-old-layout" {
+  require is_file "input/current.txt"
+  require is_file "input/app-v1.txt"
+  mkdir "archive"
+  move "input/current.txt" -> "archive/current.txt"
+  delete "input/app-v1.txt"
+  assert is_file "archive/current.txt"
+  assert not_exists "input/current.txt"
+  assert not_exists "input/app-v1.txt"
+}
+
+transaction "demonstrate-rollback" {
+  require is_file "config/app.conf"
+  require contains "config/app.conf" "schema=v2"
+  write "config/app.conf" = "temporary change\n"
+  assert contains "config/app.conf" "this text is intentionally absent"
+}
+
+transaction "missing-source" {
+  require is_file "input/does-not-exist.txt"
+  copy "input/does-not-exist.txt" -> "input/never-created.txt"
+}
+
+transaction "permission-denied" {
+  require is_dir "read-only"
+  write "read-only/blocked.txt" = "this should not be written\n"
+}

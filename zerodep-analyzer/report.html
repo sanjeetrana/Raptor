@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proofline Report</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-dim: #8b949e;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --blue: #58a6ff;
+    --cyan: #39d353;
+    --proven: #3fb950;
+    --inferred: #d29922;
+    --unknown: #8b949e;
+    --high: #f85149;
+    --medium: #d29922;
+    --low: #58a6ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  header h1 {
+    font-size: 1.8rem;
+    color: var(--cyan);
+    letter-spacing: -0.02em;
+  }
+  header p {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+  .meta { color: var(--text-dim); font-size: 0.8rem; margin-top: 0.5rem; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: 1px solid transparent;
+  }
+  .badge-proven  { color: var(--proven);  border-color: var(--proven);  background: #1a2e1a; }
+  .badge-inferred{ color: var(--inferred);border-color: var(--inferred);background: #2e2600; }
+  .badge-unknown { color: var(--unknown); border-color: var(--unknown); background: #1c2128; }
+  .severity-high   { color: var(--high);   font-weight: 700; }
+  .severity-medium { color: var(--medium); font-weight: 700; }
+  .severity-low    { color: var(--low);    font-weight: 700; }
+  .severity-info   { color: var(--text-dim); }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--blue);
+    word-break: break-all;
+  }
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-label { color: var(--text-dim); }
+  .stat-value { font-weight: 600; }
+  .yes { color: var(--green); }
+  .no  { color: var(--red); }
+  .na  { color: var(--text-dim); }
+  .section-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin: 1rem 0 0.5rem;
+  }
+  .checklist { list-style: none; }
+  .checklist li {
+    padding: 0.4rem 0;
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+    border-bottom: 1px solid var(--border);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .checkbox { color: var(--text-dim); }
+  .checklist .action { flex: 1; }
+  .disclaimer {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 0.25rem;
+  }
+  .bullet { color: var(--cyan); margin-right: 0.5rem; }
+  .evidence-list { list-style: none; }
+  .evidence-list li {
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+  .evidence-list li:last-child { border-bottom: none; }
+  .caller-item { font-size: 0.85rem; }
+  .caller-loc { color: var(--text-dim); font-size: 0.75rem; margin-left: 0.5rem; }
+  .overall-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .big-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .big-value { font-size: 2rem; font-weight: 700; margin-top: 0.2rem; }
+  details { margin-top: 0.5rem; }
+  summary {
+    cursor: pointer;
+    color: var(--blue);
+    font-size: 0.85rem;
+    padding: 0.35rem 0;
+    user-select: none;
+  }
+  summary:hover { color: var(--cyan); }
+  details[open] summary { margin-bottom: 0.5rem; }
+  .warn-box {
+    background: #2e2000;
+    border: 1px solid var(--yellow);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: var(--inferred);
+    margin-top: 0.75rem;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.75rem;
+  }
+  .limits-list { list-style: none; margin-top: 0.5rem; }
+  .limits-list li { padding: 0.2rem 0; }
+  .limits-list li::before { content: "• "; color: var(--text-dim); }
+  /* Interactive checklist */
+  .pl-check {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.15s ease;
+  }
+  .pl-check:checked {
+    background: var(--green);
+    border-color: var(--green);
+    position: relative;
+  }
+  .pl-check:checked::after {
+    content: "¹3";
+    color: #000;
+    font-size: 12px;
+    font-weight: 700;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .pl-check:hover { border-color: var(--cyan); }
+  .check-item { display: flex; gap: 0.75rem; align-items: flex-start; }
+  .check-item label { cursor: pointer; flex: 1; }
+  .check-item.done label { text-decoration: line-through; opacity: 0.5; }
+  
+  /* Progress bar */
+  .progress-wrap {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 0.35rem;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--bg3);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--cyan));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+  .progress-complete .progress-fill {
+    background: var(--green);
+  }
+
+  /* Enhanced card animations */
+  .card {
+    transition: border-color 0.2s ease, transform 0.15s ease;
+  }
+  .card:hover {
+    border-color: var(--blue);
+    transform: translateY(-1px);
+  }
+
+  /* Pulse animation for severity */
+  @keyframes pulse-sev {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  .big-value.severity-high { animation: pulse-sev 2s ease-in-out infinite; }
+
+  /* Header branding */
+  .tagline {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-top: 0.3rem;
+  }
+  .header-badge {
+    display: inline-block;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    color: var(--cyan);
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 700px) {
+    .overview-grid, .overall-box { grid-template-columns: 1fr; }
+    body { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>⬡ Proofline</h1>
+  <p class="tagline">AI made code generation cheap. Verification didn't keep up.</p>
+  <div class="meta">Before: <strong>C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\baseline</strong> &nbsp;|&nbsp; After: <strong>C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch</strong></div>
+  <span class="header-badge">Zero Dependencies · stdlib Python only</span>
+</header>
+
+<div style="margin-bottom: 2rem;">
+  <svg width="860" height="300" xmlns="http://www.w3.org/2000/svg" style="background:#1e1e1e; border-radius:8px; padding:10px;">
+<text x="20" y="30" fill="#fff" font-family="sans-serif" font-size="16" font-weight="bold">Blast Radius Heatmap</text>
+<rect x="20" y="50" width="120" height="120" rx="8" fill="#dc3545" fill-opacity="0.2" stroke="#dc3545" stroke-width="2"/>
+<text x="30" y="90" fill="#fff" font-family="sans-serif" font-size="14" font-weight="bold">validate_t..</text>
+<text x="30" y="120" fill="#dc3545" font-family="sans-serif" font-size="12" font-weight="bold">HIGH</text>
+<text x="30" y="150" fill="#adb5bd" font-family="sans-serif" font-size="11">10 affected</text>
+<rect x="160" y="50" width="120" height="120" rx="8" fill="#ffc107" fill-opacity="0.2" stroke="#ffc107" stroke-width="2"/>
+<text x="170" y="90" fill="#fff" font-family="sans-serif" font-size="14" font-weight="bold">dispatch_a..</text>
+<text x="170" y="120" fill="#ffc107" font-family="sans-serif" font-size="12" font-weight="bold">MEDIUM</text>
+<text x="170" y="150" fill="#adb5bd" font-family="sans-serif" font-size="11">0 affected</text>
+<rect x="300" y="50" width="120" height="120" rx="8" fill="#ffc107" fill-opacity="0.2" stroke="#ffc107" stroke-width="2"/>
+<text x="310" y="90" fill="#fff" font-family="sans-serif" font-size="14" font-weight="bold">process_wi..</text>
+<text x="310" y="120" fill="#ffc107" font-family="sans-serif" font-size="12" font-weight="bold">MEDIUM</text>
+<text x="310" y="150" fill="#adb5bd" font-family="sans-serif" font-size="11">0 affected</text>
+<rect x="440" y="50" width="120" height="120" rx="8" fill="#ffc107" fill-opacity="0.2" stroke="#ffc107" stroke-width="2"/>
+<text x="450" y="90" fill="#fff" font-family="sans-serif" font-size="14" font-weight="bold">__init__</text>
+<text x="450" y="120" fill="#ffc107" font-family="sans-serif" font-size="12" font-weight="bold">MEDIUM</text>
+<text x="450" y="150" fill="#adb5bd" font-family="sans-serif" font-size="11">0 affected</text>
+<rect x="580" y="50" width="120" height="120" rx="8" fill="#ffc107" fill-opacity="0.2" stroke="#ffc107" stroke-width="2"/>
+<text x="590" y="90" fill="#fff" font-family="sans-serif" font-size="14" font-weight="bold">register</text>
+<text x="590" y="120" fill="#ffc107" font-family="sans-serif" font-size="12" font-weight="bold">MEDIUM</text>
+<text x="590" y="150" fill="#adb5bd" font-family="sans-serif" font-size="11">0 affected</text>
+<rect x="720" y="50" width="120" height="120" rx="8" fill="#ffc107" fill-opacity="0.2" stroke="#ffc107" stroke-width="2"/>
+<text x="730" y="90" fill="#fff" font-family="sans-serif" font-size="14" font-weight="bold">execute</text>
+<text x="730" y="120" fill="#ffc107" font-family="sans-serif" font-size="12" font-weight="bold">MEDIUM</text>
+<text x="730" y="150" fill="#adb5bd" font-family="sans-serif" font-size="11">0 affected</text>
+<rect x="20" y="190" width="120" height="120" rx="8" fill="#ffc107" fill-opacity="0.2" stroke="#ffc107" stroke-width="2"/>
+<text x="30" y="230" fill="#fff" font-family="sans-serif" font-size="14" font-weight="bold">is_authent..</text>
+<text x="30" y="260" fill="#ffc107" font-family="sans-serif" font-size="12" font-weight="bold">MEDIUM</text>
+<text x="30" y="290" fill="#adb5bd" font-family="sans-serif" font-size="11">0 affected</text>
+</svg>
+</div>
+
+<div class="overall-box">
+  <div>
+    <div class="big-label">Overall Severity</div>
+    <div class="big-value severity-high">HIGH</div>
+  </div>
+  <div>
+    <div class="big-label">Overall Confidence</div>
+    <div class="big-value">64/100 <span class="badge badge-inferred">INFERRED</span></div>
+  </div>
+</div>
+
+<div id="pl-progress-wrap" class="progress-wrap">
+  <div class="progress-info">
+    <span>Verification Progress</span>
+    <span id="pl-progress-info">0 of 0 verified (0%)</span>
+  </div>
+  <div class="progress-bar"><div id="pl-progress-fill" class="progress-fill"></div></div>
+</div>
+
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">auth.validate_token</span>
+    <span class="severity-high">HIGH</span>
+    <span class="badge badge-inferred">INFERRED</span>
+    <span class="caller-loc">C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\auth.py</span>
+  </div>
+
+  <div class="overview-grid">
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Implementation changed</span>
+        <span class="stat-value"><span class="yes">YES</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Direct callers</span>
+        <span class="stat-value">10
+          (1 PROVEN /
+           9 INFERRED /
+           0 UNKNOWN)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Routes affected</span>
+        <span class="stat-value">0 </span>
+      </div>
+    </div>
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Tests changed</span>
+        <span class="stat-value"><span class="yes">YES</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Test candidates</span>
+        <span class="stat-value">2</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Doc references</span>
+        <span class="stat-value">0</span>
+      </div>
+    </div>
+  </div>
+
+  <ul class="evidence-list"><li><span class="bullet">•</span><strong>R1</strong> Public function 'validate_token' signature changed: ['token'] -> int → ['token']</li><li><span class="bullet">•</span><strong>R3</strong> 'except Exception' added to 'validate_token' — silently converts exceptions into return values or None; callers expecting exceptions to propagate will be affected</li><li><span class="bullet">•</span><strong>R4</strong> Security boundary modified in 'validate_token': function name suggests authentication/authorization boundary (name heuristic — INFERRED)</li></ul>
+
+  <details>
+    <summary>▶ Show callers (10)</summary>
+    <ul class="evidence-list"><li class="caller-item"><span class="badge badge-proven">PROVEN</span> services.AuthService.validate_token <span class="caller-loc">@ C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\services.py:17</span></li><li class="caller-item"><span class="badge badge-inferred">INFERRED</span> orders.get_orders <span class="caller-loc">@ C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\orders.py:18</span></li><li class="caller-item"><span class="badge badge-inferred">INFERRED</span> orders.get_order <span class="caller-loc">@ C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\orders.py:27</span></li><li class="caller-item"><span class="badge badge-inferred">INFERRED</span> orders.create_order <span class="caller-loc">@ C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\orders.py:35</span></li><li class="caller-item"><span class="badge badge-inferred">INFERRED</span> orders.cancel_order <span class="caller-loc">@ C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\orders.py:42</span></li><li class="caller-item"><span class="badge badge-inferred">INFERRED</span> orders._internal_process <span class="caller-loc">@ C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\orders.py:48</span></li><li class="caller-item"><span class="badge badge-inferred">INFERRED</span> services.AuthService.is_authenticated <span class="caller-loc">@ C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\services.py:22</span></li><li class="caller-item"><span class="badge badge-inferred">INFERRED</span> services.OrderService.verify <span class="caller-loc">@ C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\services.py:40</span></li><li class="caller-item"><span class="badge badge-inferred">INFERRED</span> tests.test_auth_v2.TestValidateToken.test_validate_token_valid <span class="caller-loc">@ C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\tests\test_auth_v2.py:37</span></li><li class="caller-item"><span class="badge badge-inferred">INFERRED</span> tests.test_auth_v2.TestValidateToken.test_validate_token_missing_user_id <span class="caller-loc">@ C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\tests\test_auth_v2.py:52</span></li></ul>
+  </details>
+
+  <details>
+    <summary>▶ Show routes (0)</summary>
+    <span class="na">none</span>
+  </details>
+
+  <details>
+    <summary>▶ Show candidate tests (2)</summary>
+    <ul class="evidence-list"><li><span class="badge badge-inferred">INFERRED</span> tests.test_auth_v2.TestValidateToken.test_validate_token_valid <span class="caller-loc">(name_match+import_match) ✓ changed</span></li><li><span class="badge badge-inferred">INFERRED</span> tests.test_auth_v2.TestValidateToken.test_validate_token_missing_user_id <span class="caller-loc">(name_match+import_match) ✓ changed</span></li></ul><div class="disclaimer">(name/import association only — not runtime coverage)</div>
+  </details>
+
+  <p class="section-title">Remaining Verification</p><ul class="checklist"><li class="check-item" data-id="auth.validate_token-0"><input type="checkbox" class="pl-check" id="chk-auth.validate_token-0" /><label for="chk-auth.validate_token-0" class="action"><span class="severity-high">[HIGH]</span> Test malformed input to validate_token()</label></li><li class="check-item" data-id="auth.validate_token-1"><input type="checkbox" class="pl-check" id="chk-auth.validate_token-1" /><label for="chk-auth.validate_token-1" class="action"><span class="severity-high">[HIGH]</span> Verify callers handle None return from validate_token()</label></li><li class="check-item" data-id="auth.validate_token-2"><input type="checkbox" class="pl-check" id="chk-auth.validate_token-2" /><label for="chk-auth.validate_token-2" class="action"><span class="severity-high">[HIGH]</span> Test authentication boundary behavior of validate_token()</label></li><li class="check-item" data-id="auth.validate_token-3"><input type="checkbox" class="pl-check" id="chk-auth.validate_token-3" /><label for="chk-auth.validate_token-3" class="action"><span class="severity-high">[HIGH]</span> Verify all 10 callers handle new signature of validate_token()</label></li></ul>
+  <div class="warn-box">⚠ Test file(s) containing candidates for this symbol were deleted/renamed: test_auth.py (candidate test count may be lower than baseline)</div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">dynamic_caller.dispatch_auth_check</span>
+    <span class="severity-medium">MEDIUM</span>
+    <span class="badge badge-inferred">INFERRED</span>
+    <span class="caller-loc">C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\dynamic_caller.py</span>
+  </div>
+
+  <div class="overview-grid">
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Implementation changed</span>
+        <span class="stat-value"><span class="yes">YES</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Direct callers</span>
+        <span class="stat-value">0
+          (0 PROVEN /
+           0 INFERRED /
+           0 UNKNOWN)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Routes affected</span>
+        <span class="stat-value">0 </span>
+      </div>
+    </div>
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Tests changed</span>
+        <span class="stat-value"><span class="na">N/A</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Test candidates</span>
+        <span class="stat-value">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Doc references</span>
+        <span class="stat-value">0</span>
+      </div>
+    </div>
+  </div>
+
+  <ul class="evidence-list"><li><span class="bullet">•</span><strong>R4</strong> Security boundary modified in 'dispatch_auth_check': function name suggests authentication/authorization boundary (name heuristic — INFERRED)</li><li><span class="bullet">•</span><strong>R6</strong> No candidate tests found for 'dynamic_caller.dispatch_auth_check' (name/import association only — not runtime coverage)</li></ul>
+
+  <details>
+    <summary>▶ Show callers (0)</summary>
+    <span class="na">none identified</span>
+  </details>
+
+  <details>
+    <summary>▶ Show routes (0)</summary>
+    <span class="na">none</span>
+  </details>
+
+  <details>
+    <summary>▶ Show candidate tests (0)</summary>
+    <span class="no">none found</span> <div class="disclaimer">(name/import association only — not runtime coverage)</div>
+  </details>
+
+  <p class="section-title">Remaining Verification</p><ul class="checklist"><li class="check-item" data-id="dynamic_caller.dispatch_auth_check-0"><input type="checkbox" class="pl-check" id="chk-dynamic_caller.dispatch_auth_check-0" /><label for="chk-dynamic_caller.dispatch_auth_check-0" class="action"><span class="severity-high">[HIGH]</span> Test authentication boundary behavior of dispatch_auth_check()</label></li><li class="check-item" data-id="dynamic_caller.dispatch_auth_check-1"><input type="checkbox" class="pl-check" id="chk-dynamic_caller.dispatch_auth_check-1" /><label for="chk-dynamic_caller.dispatch_auth_check-1" class="action"><span class="severity-medium">[MEDIUM]</span> Add tests for dispatch_auth_check()</label></li></ul>
+  
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">dynamic_caller.process_with_validator</span>
+    <span class="severity-medium">MEDIUM</span>
+    <span class="badge badge-proven">PROVEN</span>
+    <span class="caller-loc">C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\dynamic_caller.py</span>
+  </div>
+
+  <div class="overview-grid">
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Implementation changed</span>
+        <span class="stat-value"><span class="yes">YES</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Direct callers</span>
+        <span class="stat-value">0
+          (0 PROVEN /
+           0 INFERRED /
+           0 UNKNOWN)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Routes affected</span>
+        <span class="stat-value">0 </span>
+      </div>
+    </div>
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Tests changed</span>
+        <span class="stat-value"><span class="na">N/A</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Test candidates</span>
+        <span class="stat-value">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Doc references</span>
+        <span class="stat-value">0</span>
+      </div>
+    </div>
+  </div>
+
+  <ul class="evidence-list"><li><span class="bullet">•</span><strong>R6</strong> No candidate tests found for 'dynamic_caller.process_with_validator' (name/import association only — not runtime coverage)</li></ul>
+
+  <details>
+    <summary>▶ Show callers (0)</summary>
+    <span class="na">none identified</span>
+  </details>
+
+  <details>
+    <summary>▶ Show routes (0)</summary>
+    <span class="na">none</span>
+  </details>
+
+  <details>
+    <summary>▶ Show candidate tests (0)</summary>
+    <span class="no">none found</span> <div class="disclaimer">(name/import association only — not runtime coverage)</div>
+  </details>
+
+  <p class="section-title">Remaining Verification</p><ul class="checklist"><li class="check-item" data-id="dynamic_caller.process_with_validator-0"><input type="checkbox" class="pl-check" id="chk-dynamic_caller.process_with_validator-0" /><label for="chk-dynamic_caller.process_with_validator-0" class="action"><span class="severity-medium">[MEDIUM]</span> Add tests for process_with_validator()</label></li></ul>
+  
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">dynamic_caller.PluginRegistry.__init__</span>
+    <span class="severity-medium">MEDIUM</span>
+    <span class="badge badge-proven">PROVEN</span>
+    <span class="caller-loc">C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\dynamic_caller.py</span>
+  </div>
+
+  <div class="overview-grid">
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Implementation changed</span>
+        <span class="stat-value"><span class="yes">YES</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Direct callers</span>
+        <span class="stat-value">0
+          (0 PROVEN /
+           0 INFERRED /
+           0 UNKNOWN)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Routes affected</span>
+        <span class="stat-value">0 </span>
+      </div>
+    </div>
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Tests changed</span>
+        <span class="stat-value"><span class="na">N/A</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Test candidates</span>
+        <span class="stat-value">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Doc references</span>
+        <span class="stat-value">0</span>
+      </div>
+    </div>
+  </div>
+
+  <ul class="evidence-list"><li><span class="bullet">•</span><strong>R6</strong> No candidate tests found for 'dynamic_caller.PluginRegistry.__init__' (name/import association only — not runtime coverage)</li></ul>
+
+  <details>
+    <summary>▶ Show callers (0)</summary>
+    <span class="na">none identified</span>
+  </details>
+
+  <details>
+    <summary>▶ Show routes (0)</summary>
+    <span class="na">none</span>
+  </details>
+
+  <details>
+    <summary>▶ Show candidate tests (0)</summary>
+    <span class="no">none found</span> <div class="disclaimer">(name/import association only — not runtime coverage)</div>
+  </details>
+
+  <p class="section-title">Remaining Verification</p><ul class="checklist"><li class="check-item" data-id="dynamic_caller.PluginRegistry.__init__-0"><input type="checkbox" class="pl-check" id="chk-dynamic_caller.PluginRegistry.__init__-0" /><label for="chk-dynamic_caller.PluginRegistry.__init__-0" class="action"><span class="severity-medium">[MEDIUM]</span> Add tests for __init__()</label></li></ul>
+  
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">dynamic_caller.PluginRegistry.register</span>
+    <span class="severity-medium">MEDIUM</span>
+    <span class="badge badge-proven">PROVEN</span>
+    <span class="caller-loc">C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\dynamic_caller.py</span>
+  </div>
+
+  <div class="overview-grid">
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Implementation changed</span>
+        <span class="stat-value"><span class="yes">YES</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Direct callers</span>
+        <span class="stat-value">0
+          (0 PROVEN /
+           0 INFERRED /
+           0 UNKNOWN)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Routes affected</span>
+        <span class="stat-value">0 </span>
+      </div>
+    </div>
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Tests changed</span>
+        <span class="stat-value"><span class="na">N/A</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Test candidates</span>
+        <span class="stat-value">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Doc references</span>
+        <span class="stat-value">0</span>
+      </div>
+    </div>
+  </div>
+
+  <ul class="evidence-list"><li><span class="bullet">•</span><strong>R6</strong> No candidate tests found for 'dynamic_caller.PluginRegistry.register' (name/import association only — not runtime coverage)</li></ul>
+
+  <details>
+    <summary>▶ Show callers (0)</summary>
+    <span class="na">none identified</span>
+  </details>
+
+  <details>
+    <summary>▶ Show routes (0)</summary>
+    <span class="na">none</span>
+  </details>
+
+  <details>
+    <summary>▶ Show candidate tests (0)</summary>
+    <span class="no">none found</span> <div class="disclaimer">(name/import association only — not runtime coverage)</div>
+  </details>
+
+  <p class="section-title">Remaining Verification</p><ul class="checklist"><li class="check-item" data-id="dynamic_caller.PluginRegistry.register-0"><input type="checkbox" class="pl-check" id="chk-dynamic_caller.PluginRegistry.register-0" /><label for="chk-dynamic_caller.PluginRegistry.register-0" class="action"><span class="severity-medium">[MEDIUM]</span> Add tests for register()</label></li></ul>
+  
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">dynamic_caller.PluginRegistry.execute</span>
+    <span class="severity-medium">MEDIUM</span>
+    <span class="badge badge-proven">PROVEN</span>
+    <span class="caller-loc">C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\dynamic_caller.py</span>
+  </div>
+
+  <div class="overview-grid">
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Implementation changed</span>
+        <span class="stat-value"><span class="yes">YES</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Direct callers</span>
+        <span class="stat-value">0
+          (0 PROVEN /
+           0 INFERRED /
+           0 UNKNOWN)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Routes affected</span>
+        <span class="stat-value">0 </span>
+      </div>
+    </div>
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Tests changed</span>
+        <span class="stat-value"><span class="na">N/A</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Test candidates</span>
+        <span class="stat-value">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Doc references</span>
+        <span class="stat-value">0</span>
+      </div>
+    </div>
+  </div>
+
+  <ul class="evidence-list"><li><span class="bullet">•</span><strong>R6</strong> No candidate tests found for 'dynamic_caller.PluginRegistry.execute' (name/import association only — not runtime coverage)</li></ul>
+
+  <details>
+    <summary>▶ Show callers (0)</summary>
+    <span class="na">none identified</span>
+  </details>
+
+  <details>
+    <summary>▶ Show routes (0)</summary>
+    <span class="na">none</span>
+  </details>
+
+  <details>
+    <summary>▶ Show candidate tests (0)</summary>
+    <span class="no">none found</span> <div class="disclaimer">(name/import association only — not runtime coverage)</div>
+  </details>
+
+  <p class="section-title">Remaining Verification</p><ul class="checklist"><li class="check-item" data-id="dynamic_caller.PluginRegistry.execute-0"><input type="checkbox" class="pl-check" id="chk-dynamic_caller.PluginRegistry.execute-0" /><label for="chk-dynamic_caller.PluginRegistry.execute-0" class="action"><span class="severity-medium">[MEDIUM]</span> Add tests for execute()</label></li></ul>
+  
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">services.AuthService.is_authenticated</span>
+    <span class="severity-medium">MEDIUM</span>
+    <span class="badge badge-inferred">INFERRED</span>
+    <span class="caller-loc">C:\Users\urjit upadhyay\Dropbox (Old)\PC\Desktop\proof\proofline\demo_repo\patch\services.py</span>
+  </div>
+
+  <div class="overview-grid">
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Implementation changed</span>
+        <span class="stat-value"><span class="yes">YES</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Direct callers</span>
+        <span class="stat-value">0
+          (0 PROVEN /
+           0 INFERRED /
+           0 UNKNOWN)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Routes affected</span>
+        <span class="stat-value">0 </span>
+      </div>
+    </div>
+    <div>
+      <div class="stat-row">
+        <span class="stat-label">Tests changed</span>
+        <span class="stat-value"><span class="na">N/A</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Test candidates</span>
+        <span class="stat-value">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Doc references</span>
+        <span class="stat-value">0</span>
+      </div>
+    </div>
+  </div>
+
+  <ul class="evidence-list"><li><span class="bullet">•</span><strong>R2</strong> Exception handler changed in 'is_authenticated' — callers may rely on specific exceptions propagating</li><li><span class="bullet">•</span><strong>R4</strong> Security boundary modified in 'is_authenticated': function name suggests authentication/authorization boundary (name heuristic — INFERRED); function contains security-sensitive calls</li><li><span class="bullet">•</span><strong>R6</strong> No candidate tests found for 'services.AuthService.is_authenticated' (name/import association only — not runtime coverage)</li><li><span class="bullet">•</span><strong>R9</strong> Implementation logic changed in 'is_authenticated' but its docstring appears unchanged (doc rot risk).</li></ul>
+
+  <details>
+    <summary>▶ Show callers (0)</summary>
+    <span class="na">none identified</span>
+  </details>
+
+  <details>
+    <summary>▶ Show routes (0)</summary>
+    <span class="na">none</span>
+  </details>
+
+  <details>
+    <summary>▶ Show candidate tests (0)</summary>
+    <span class="no">none found</span> <div class="disclaimer">(name/import association only — not runtime coverage)</div>
+  </details>
+
+  <p class="section-title">Remaining Verification</p><ul class="checklist"><li class="check-item" data-id="services.AuthService.is_authenticated-0"><input type="checkbox" class="pl-check" id="chk-services.AuthService.is_authenticated-0" /><label for="chk-services.AuthService.is_authenticated-0" class="action"><span class="severity-high">[HIGH]</span> Test authentication boundary behavior of is_authenticated()</label></li><li class="check-item" data-id="services.AuthService.is_authenticated-1"><input type="checkbox" class="pl-check" id="chk-services.AuthService.is_authenticated-1" /><label for="chk-services.AuthService.is_authenticated-1" class="action"><span class="severity-medium">[MEDIUM]</span> Add tests for is_authenticated()</label></li></ul>
+  
+</div>
+
+
+<footer>
+  <strong>Proofline Limits</strong>
+  <ul class="limits-list">
+    <li>Static analysis only — runtime behavior not observed.</li>
+    <li>Test association = name/import heuristic, NOT runtime coverage.</li>
+    <li>Route detection = framework decorator pattern match (INFERRED).</li>
+    <li>UNKNOWN edges cannot be resolved without runtime data.</li>
+    <li>Proofline never certifies "safe to merge."</li>
+    <li>Zero third-party dependencies — stdlib Python only.</li>
+  </ul>
+</footer>
+
+<script>
+// Proofline Interactive Checklist — localStorage persistence, zero deps
+(function() {
+  'use strict';
+  var STORAGE_KEY = 'proofline_checks_' + location.pathname;
+  var checks = {};
+  
+  // Load saved state
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) checks = JSON.parse(saved);
+  } catch(e) {}
+  
+  // Apply saved state to checkboxes
+  var boxes = document.querySelectorAll('.pl-check');
+  boxes.forEach(function(box) {
+    var id = box.id;
+    if (checks[id]) {
+      box.checked = true;
+      box.closest('.check-item').classList.add('done');
+    }
+  });
+  
+  // Listen for changes
+  document.addEventListener('change', function(e) {
+    if (!e.target.classList.contains('pl-check')) return;
+    var id = e.target.id;
+    var item = e.target.closest('.check-item');
+    if (e.target.checked) {
+      checks[id] = true;
+      item.classList.add('done');
+    } else {
+      delete checks[id];
+      item.classList.remove('done');
+    }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checks)); } catch(e) {}
+    updateProgress();
+  });
+  
+  // Progress bar
+  function updateProgress() {
+    var total = document.querySelectorAll('.pl-check').length;
+    var done = document.querySelectorAll('.pl-check:checked').length;
+    var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    
+    var info = document.getElementById('pl-progress-info');
+    var fill = document.getElementById('pl-progress-fill');
+    var wrap = document.getElementById('pl-progress-wrap');
+    if (info) info.textContent = done + ' of ' + total + ' verified (' + pct + '%)';
+    if (fill) fill.style.width = pct + '%';
+    if (wrap) {
+      if (pct === 100) wrap.classList.add('progress-complete');
+      else wrap.classList.remove('progress-complete');
+    }
+  }
+  
+  updateProgress();
+})();
+</script>
+</body>
+</html>

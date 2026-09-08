@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ZeroVault — A secure, zero-dependency password manager and security toolkit">
+  <meta name="theme-color" content="#0f1117">
+  <title>ZeroVault — Secure Password Manager</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="logo" aria-label="ZeroVault">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>ZeroVault</span>
+      </div>
+      <ul class="nav-links" role="list">
+        <li role="listitem"><a href="#" data-view="unlock" id="nav-unlock" class="active" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Unlock
+        </a></li>
+        <li role="listitem"><a href="#" data-view="dashboard" id="nav-dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a></li>
+        <li role="listitem"><a href="#" data-view="vault" id="nav-vault">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><ellipse cx="12" cy="12" rx="9" ry="9"></ellipse><path d="M12 8v4l3 3"></path></svg>
+          Vault
+        </a></li>
+        <li role="listitem"><a href="#" data-view="authenticator" id="nav-authenticator">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"></path></svg>
+          Authenticator
+        </a></li>
+        <li role="listitem"><a href="#" data-view="scanner" id="nav-scanner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          Secret Scanner
+        </a></li>
+        <li role="listitem"><a href="#" data-view="generator" id="nav-generator">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          Generator
+        </a></li>
+        <li role="listitem"><a href="#" data-view="audit" id="nav-audit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Security Audit
+        </a></li>
+      </ul>
+      <div class="nav-footer">
+        <div class="vault-status-pill" id="vault-status" role="status" aria-live="polite">
+          <span class="status-dot" id="status-dot" data-state="locked" aria-hidden="true"></span>
+          <span id="status-text">Locked</span>
+        </div>
+        <button id="lock-btn" class="btn-lock" style="display:none" aria-label="Lock vault">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Lock Vault
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="main-content" tabindex="-1">
+      <div class="view-container">
+
+        <!-- View: Unlock -->
+        <section id="view-unlock" class="view active" aria-labelledby="unlock-heading">
+          <div class="unlock-hero">
+            <div class="glass-card unlock-card">
+              <div class="unlock-logo" aria-hidden="true">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+              <h1 id="unlock-heading">ZeroVault</h1>
+              <p class="text-muted">Zero-dependency secure password manager</p>
+
+              <div class="unlock-badges" aria-label="Security features">
+                <span class="badge-pill">Zero dependencies</span>
+                <span class="badge-pill">AES-256-GCM</span>
+                <span class="badge-pill">Argon2id</span>
+              </div>
+
+              <form id="form-unlock" novalidate>
+                <div class="form-group">
+                  <label for="unlock-path">Vault File Path</label>
+                  <input type="text" id="unlock-path" placeholder="./my.zvault" value="./my.zvault"
+                    autocomplete="off" aria-describedby="path-hint">
+                  <small id="path-hint" class="form-hint">Relative or absolute path to your .zvault file</small>
+                </div>
+                <div class="form-group">
+                  <label for="unlock-password">Master Password</label>
+                  <div class="input-with-toggle">
+                    <input type="password" id="unlock-password" placeholder="Enter master password"
+                      autocomplete="current-password" required aria-required="true">
+                    <button type="button" class="btn-toggle-pw" id="toggle-unlock-pw" aria-label="Toggle password visibility">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                  </div>
+                </div>
+                <div id="unlock-error" class="form-error" role="alert" aria-live="assertive" style="display:none"></div>
+                <div class="actions">
+                  <button type="submit" class="btn-primary full-width" id="btn-unlock">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    Unlock Vault
+                  </button>
+                  <button type="button" id="btn-create-vault" class="btn-secondary full-width">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Create New Vault
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- View: Dashboard -->
+        <section id="view-dashboard" class="view" aria-labelledby="dashboard-heading">
+          <div class="page-header">
+            <h1 id="dashboard-heading">Dashboard</h1>
+            <p class="page-subtitle">Your security overview</p>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="glass-card stat-card" role="region" aria-label="Total credentials">
+              <div class="stat-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="9" ry="9"></ellipse><path d="M12 8v4l3 3"></path></svg>
+              </div>
+              <div class="stat-value" id="dash-total-items">—</div>
+              <div class="stat-label">Credentials</div>
+            </div>
+            <div class="glass-card stat-card" role="region" aria-label="Security health score">
+              <div class="stat-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
+              <div class="stat-value" id="dash-health">—</div>
+              <div class="stat-label">Health Score</div>
+            </div>
+            <div class="glass-card stat-card" role="region" aria-label="Open issues">
+              <div class="stat-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+              <div class="stat-value" id="dash-issues">—</div>
+              <div class="stat-label">Issues</div>
+            </div>
+            <div class="glass-card stat-card" role="region" aria-label="Dependencies">
+              <div class="stat-icon text-success" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="stat-value text-success">Zero</div>
+              <div class="stat-label">Dependencies</div>
+            </div>
+          </div>
+
+          <div class="dashboard-row">
+            <div class="glass-card dashboard-actions" role="region" aria-labelledby="quick-actions-heading">
+              <h2 id="quick-actions-heading" class="card-title">Quick Actions</h2>
+              <div class="quick-actions">
+                <button class="quick-action-btn" onclick="navigate('vault')" aria-label="Add new credential">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  Add Credential
+                </button>
+                <button class="quick-action-btn" onclick="navigate('generator')" aria-label="Generate secure password">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  Generate Password
+                </button>
+                <button class="quick-action-btn" onclick="navigate('scanner')" aria-label="Scan for secrets">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  Scan for Secrets
+                </button>
+                <button class="quick-action-btn" onclick="runDashboardAudit()" aria-label="Run security audit">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  Security Audit
+                </button>
+              </div>
+            </div>
+
+            <div class="glass-card" role="region" aria-labelledby="recent-activity-heading">
+              <h2 id="recent-activity-heading" class="card-title">Security Status</h2>
+              <div id="dashboard-audit-summary" class="audit-summary-inline">
+                <p class="text-muted empty-hint">Run a vault audit to see findings here.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- View: Vault -->
+        <section id="view-vault" class="view" aria-labelledby="vault-heading">
+          <div class="page-header">
+            <div>
+              <h1 id="vault-heading">Vault</h1>
+              <p class="page-subtitle" id="vault-count-subtitle">Your credentials</p>
+            </div>
+            <button class="btn-primary" id="btn-add-item" aria-label="Add new credential">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Add Credential
+            </button>
+          </div>
+
+          <!-- Add/Edit Credential Form -->
+          <div id="credential-form-container" class="glass-card mb-4" style="display:none" role="dialog" aria-modal="true" aria-labelledby="credential-form-title">
+            <h2 id="credential-form-title" class="card-title">Add Credential</h2>
+            <form id="form-credential" novalidate>
+              <input type="hidden" id="credential-id">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="cred-service">Service <span class="required-mark" aria-label="required">*</span></label>
+                  <input type="text" id="cred-service" placeholder="e.g. GitHub, Gmail" required
+                    autocomplete="off" aria-required="true">
+                </div>
+                <div class="form-group">
+                  <label for="cred-username">Username / Email</label>
+                  <input type="text" id="cred-username" placeholder="user@example.com" autocomplete="off">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cred-password">Password</label>
+                <div class="input-with-action">
+                  <input type="password" id="cred-password" placeholder="Enter or generate a password"
+                    autocomplete="new-password" aria-describedby="cred-password-hint">
+                  <button type="button" class="btn-toggle-pw" id="toggle-cred-pw" aria-label="Show/hide password">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  </button>
+                  <button type="button" id="btn-gen-for-cred" class="btn-icon-pill" aria-label="Generate secure password">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    Generate
+                  </button>
+                </div>
+                <small id="cred-password-hint" class="form-hint">Password is sent to the server and encrypted in vault.</small>
+              </div>
+              <div class="form-group">
+                <label for="cred-notes">Notes</label>
+                <textarea id="cred-notes" rows="2" placeholder="Optional notes — avoid placing sensitive data here"></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary" id="btn-save-credential">Save</button>
+                <button type="button" class="btn-ghost" id="btn-cancel-credential">Cancel</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Credential List -->
+          <div class="glass-card">
+            <div id="vault-loading-state" class="state-container" aria-live="polite">
+              <div class="spinner" aria-hidden="true"></div>
+              <p>Loading credentials...</p>
+            </div>
+            <div id="vault-empty-state" class="state-container" style="display:none" aria-live="polite">
+              <div class="empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </div>
+              <h3>No credentials yet</h3>
+              <p class="text-muted">Click <strong>Add Credential</strong> to store your first login.</p>
+            </div>
+            <div id="vault-items-list" class="items-list" role="list" aria-label="Credential list">
+              <!-- Rendered by app.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- View: Authenticator -->
+        <section id="view-authenticator" class="view" aria-labelledby="auth-heading">
+          <div class="page-header">
+            <div>
+              <h1 id="auth-heading">Authenticator</h1>
+              <p class="page-subtitle">Time-based one-time passwords (TOTP)</p>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="security-notice" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span>Secrets are processed server-side only and are <strong>never stored in the browser</strong>.</span>
+            </div>
+
+            <form id="form-totp-verify" novalidate>
+              <div class="form-group mt-4">
+                <label for="totp-secret">Secret Key (Base32)</label>
+                <div class="input-with-toggle">
+                  <input type="password" id="totp-secret" placeholder="e.g. JBSWY3DPEHPK3PXP"
+                    autocomplete="off" aria-describedby="totp-secret-hint" spellcheck="false">
+                  <button type="button" class="btn-toggle-pw" id="toggle-totp-pw" aria-label="Show/hide secret">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  </button>
+                </div>
+                <small id="totp-secret-hint" class="form-hint">The Base32-encoded secret from your authenticator app setup.</small>
+              </div>
+              <div id="totp-form-error" class="form-error" role="alert" aria-live="assertive" style="display:none"></div>
+              <button type="submit" class="btn-primary" id="btn-gen-totp">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Generate Code
+              </button>
+            </form>
+
+            <div id="totp-result" class="totp-display" style="display:none" aria-live="polite">
+              <div class="totp-code-wrapper">
+                <div class="totp-label">Current Code</div>
+                <div class="totp-code" id="totp-code-display" aria-label="TOTP code">------</div>
+                <div class="totp-meta">
+                  <span id="totp-timer" class="totp-timer" role="timer">-- seconds</span>
+                  <button type="button" class="btn-copy-code" id="btn-copy-totp" aria-label="Copy TOTP code">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Copy
+                  </button>
+                </div>
+              </div>
+              <div class="totp-progress" role="progressbar" aria-label="Time remaining" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                <div class="totp-progress-bar" id="totp-progress-bar"></div>
+              </div>
+              <p class="totp-warn text-muted" id="totp-expiry-warn" style="display:none" role="alert">
+                ⚠️ Code expires soon — generate a new one after it changes.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- View: Scanner -->
+        <section id="view-scanner" class="view" aria-labelledby="scanner-heading">
+          <div class="page-header">
+            <div>
+              <h1 id="scanner-heading">Secret Scanner</h1>
+              <p class="page-subtitle">Detect accidentally hardcoded credentials</p>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="security-notice" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span>All detected secrets are <strong>redacted by the server</strong> — complete secrets are never returned to the browser.</span>
+            </div>
+
+            <form id="form-scanner" novalidate>
+              <div class="form-group mt-4">
+                <label for="scanner-input">
+                  Paste code, config, or text to scan
+                  <span class="char-counter" id="scanner-char-count" aria-live="polite"></span>
+                </label>
+                <textarea id="scanner-input" rows="9" placeholder="Paste your source code, config file, .env, or any text here..."
+                  aria-describedby="scanner-hint" spellcheck="false"></textarea>
+                <small id="scanner-hint" class="form-hint">Maximum 5MB of text. Binary files are not supported.</small>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary" id="btn-scan">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  Scan for Secrets
+                </button>
+                <button type="button" class="btn-ghost" id="btn-clear-scanner">Clear</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="scanner-results" class="scanner-results" aria-live="polite" aria-label="Scan results"></div>
+        </section>
+
+        <!-- View: Generator -->
+        <section id="view-generator" class="view" aria-labelledby="generator-heading">
+          <div class="page-header">
+            <div>
+              <h1 id="generator-heading">Secure Generator</h1>
+              <p class="page-subtitle">Server-side CSPRNG — <code>Math.random()</code> is never used</p>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="gen-tabs" role="tablist" aria-label="Generator type">
+              <button class="tab-btn active" data-gen="password" role="tab" aria-selected="true" aria-controls="gen-panel" id="tab-password">Password</button>
+              <button class="tab-btn" data-gen="passphrase" role="tab" aria-selected="false" aria-controls="gen-panel" id="tab-passphrase">Passphrase</button>
+              <button class="tab-btn" data-gen="key" role="tab" aria-selected="false" aria-controls="gen-panel" id="tab-key">Crypto Key</button>
+            </div>
+
+            <!-- Password Options -->
+            <div id="gen-opts-password" class="gen-options" role="tabpanel" aria-labelledby="tab-password">
+              <div class="gen-option-row">
+                <label for="gen-length">Length: <strong id="gen-length-display">20</strong></label>
+                <input type="range" id="gen-length" min="8" max="128" value="20" aria-label="Password length">
+              </div>
+              <div class="gen-checkboxes" role="group" aria-label="Character sets">
+                <label class="checkbox-label"><input type="checkbox" id="gen-upper" checked> A–Z Uppercase</label>
+                <label class="checkbox-label"><input type="checkbox" id="gen-lower" checked> a–z Lowercase</label>
+                <label class="checkbox-label"><input type="checkbox" id="gen-digits" checked> 0–9 Digits</label>
+                <label class="checkbox-label"><input type="checkbox" id="gen-symbols" checked> !@#$ Symbols</label>
+                <label class="checkbox-label"><input type="checkbox" id="gen-no-ambig"> Avoid ambiguous (0, O, l, 1)</label>
+              </div>
+            </div>
+
+            <!-- Passphrase Options -->
+            <div id="gen-opts-passphrase" class="gen-options" style="display:none" role="tabpanel" aria-labelledby="tab-passphrase">
+              <div class="gen-option-row">
+                <label for="gen-words">Words: <strong id="gen-words-display">4</strong></label>
+                <input type="range" id="gen-words" min="3" max="8" value="4" aria-label="Passphrase word count">
+              </div>
+              <div class="gen-checkboxes" role="group" aria-label="Passphrase options">
+                <label class="checkbox-label"><input type="checkbox" id="gen-capitalize" checked> Capitalize words</label>
+                <label class="checkbox-label"><input type="checkbox" id="gen-include-num"> Append number</label>
+              </div>
+            </div>
+
+            <!-- Key Options -->
+            <div id="gen-opts-key" class="gen-options" style="display:none" role="tabpanel" aria-labelledby="tab-key">
+              <div class="gen-checkboxes" role="group" aria-label="Key format">
+                <label class="radio-label"><input type="radio" name="key-fmt" value="hex" checked> Hex (64 chars)</label>
+                <label class="radio-label"><input type="radio" name="key-fmt" value="base64"> Base64URL (43 chars)</label>
+              </div>
+            </div>
+
+            <div class="result-box" id="gen-result-box" aria-live="polite" aria-label="Generated value">
+              <code id="gen-result" class="gen-value" aria-label="Generated value">Click Generate to create a secret</code>
+            </div>
+            <div class="entropy-bar-wrapper" id="entropy-wrapper" style="display:none">
+              <div class="entropy-label">
+                <span>Entropy</span>
+                <span id="gen-entropy" class="entropy-value">-- bits</span>
+              </div>
+              <div class="entropy-bar" role="meter" aria-label="Entropy strength">
+                <div class="entropy-fill" id="entropy-fill"></div>
+              </div>
+            </div>
+
+            <div class="form-actions mt-4">
+              <button id="btn-generate" class="btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Generate
+              </button>
+              <button id="btn-copy-gen" class="btn-secondary" style="display:none" aria-label="Copy generated value">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- View: Security Audit -->
+        <section id="view-audit" class="view" aria-labelledby="audit-heading">
+          <div class="page-header">
+            <div>
+              <h1 id="audit-heading">Security Audit</h1>
+              <p class="page-subtitle">Analyze password strength and vault health</p>
+            </div>
+          </div>
+
+          <div class="audit-layout">
+            <!-- Password Checker -->
+            <div class="glass-card" role="region" aria-labelledby="pwd-audit-heading">
+              <h2 id="pwd-audit-heading" class="card-title">Password Strength Checker</h2>
+              <form id="form-audit-pwd" novalidate>
+                <div class="form-group">
+                  <label for="audit-pwd-input">Password to audit</label>
+                  <div class="input-with-toggle">
+                    <input type="password" id="audit-pwd-input" placeholder="Enter a password to analyse..."
+                      autocomplete="off" aria-describedby="audit-pwd-hint">
+                    <button type="button" class="btn-toggle-pw" id="toggle-audit-pw" aria-label="Show/hide password">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                  </div>
+                  <small id="audit-pwd-hint" class="form-hint">The password is sent to the server for analysis and immediately discarded.</small>
+                </div>
+                <button type="submit" class="btn-primary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  Audit Password
+                </button>
+              </form>
+              <div id="audit-result" class="audit-result-panel" aria-live="polite" aria-label="Audit results"></div>
+            </div>
+
+            <!-- Full Vault Audit -->
+            <div class="glass-card" role="region" aria-labelledby="vault-audit-heading">
+              <h2 id="vault-audit-heading" class="card-title">Full Vault Audit</h2>
+              <p class="text-muted">Checks all vault credentials for weak passwords, password reuse, and embedded secrets.</p>
+              <button id="btn-audit-vault" class="btn-secondary full-width mt-4">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                Run Full Vault Audit
+              </button>
+              <div id="vault-audit-result" class="audit-result-panel mt-4" aria-live="polite" aria-label="Vault audit results"></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" aria-live="polite" aria-atomic="false" role="region" aria-label="Notifications"></div>
+
+  <!-- Confirm Modal -->
+  <div id="confirm-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="modal-box glass-card">
+      <h2 id="confirm-title">Confirm</h2>
+      <p id="confirm-message" class="text-muted"></p>
+      <div class="form-actions mt-4">
+        <button id="confirm-ok" class="btn-danger">Confirm</button>
+        <button id="confirm-cancel" class="btn-ghost">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reveal Modal -->
+  <div id="reveal-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="reveal-title">
+    <div class="modal-box glass-card">
+      <div class="reveal-header">
+        <h2 id="reveal-title">Credential</h2>
+        <button class="btn-close" id="reveal-close" aria-label="Close">&times;</button>
+      </div>
+      <div id="reveal-content" class="reveal-content"></div>
+      <div class="form-actions mt-4">
+        <button id="reveal-done" class="btn-primary">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

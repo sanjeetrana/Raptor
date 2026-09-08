@@ -1,0 +1,14 @@
+# The generated output must survive a clone byte for byte. Without this,
+# a checkout on a platform with line ending translation could rewrite a
+# PDF and produce a file no reader will open.
+*.pdf binary
+*.png binary
+
+# Sources are text and normalise to LF in the repository. inkless itself
+# accepts CRLF input and normalises it before parsing, so a checkout with
+# native line endings still produces identical output.
+*.py   text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.toml text eol=lf
+LICENSE text eol=lf

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Limitations · UndoLang</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="wrap masthead-row">
+        <a class="brand" href="../index.html">UndoLang</a
+        ><span class="edition">Limitations</span
+        ><button class="menu secondary" data-menu aria-expanded="false">
+          Contents
+        </button>
+        <nav class="nav">
+          <a href="index.html">Docs home</a
+          ><a href="getting-started.html">Start</a>
+        </nav>
+      </div>
+    </header>
+    <div class="docs-shell">
+      <aside class="sidebar" data-sidebar>
+        <strong>Documentation</strong><a href="index.html">Overview</a
+        ><a href="getting-started.html">Getting started</a
+        ><a href="language.html">Language</a><a href="programs.html">Programs</a
+        ><a href="transactions.html">Transactions</a
+        ><a href="paths.html">Paths</a><a href="agents.html">AI agents</a
+        ><a href="security.html">Security</a
+        ><a aria-current="page" href="limitations.html">Limitations</a>
+      </aside>
+      <main class="doc">
+        <p class="kicker">Honest guarantees</p>
+        <h1>Know where the boundary ends.</h1>
+        <h2 id="atomicity">Visibility and isolation</h2>
+        <p>
+          UndoLang is not a filesystem database or snapshot. Other processes can
+          observe intermediate changes, and it does not isolate concurrent
+          applications. A whole program is not one super-transaction.
+        </p>
+        <h2 id="platform">Platform behavior</h2>
+        <p>
+          Rename replacement and directory sync do not have one portable
+          guarantee. macOS arm64 is behavior-tested here; Linux, Windows, and
+          other release targets are cross-built only. Windows open handles and
+          reparse behavior need real-host validation.
+        </p>
+        <h2 id="metadata">Metadata</h2>
+        <p>
+          Contents, directory structure, symlink targets for move/delete, and
+          basic modes are covered. Ownership, ACLs, xattrs, SELinux labels,
+          timestamps, sparse allocation, hard-link identity, resource forks, and
+          alternate streams are not preserved.
+        </p>
+        <h2 id="objects">Objects and paths</h2>
+        <p>
+          Symlink copying, FIFOs, sockets, devices, and unsafe reparse points
+          are unsupported. Separate primary roots with overlapping allowed paths
+          can race.
+        </p>
+        <h2 id="recovery">Recovery scope</h2>
+        <p>
+          Recovery rolls back the one unresolved transaction; it never
+          automatically resumes later program entries. Corrupt or ambiguous
+          state retains backups and requires inspection. History is audit
+          metadata, not a promise of post-commit undo after unrelated changes.
+        </p>
+        <h2 id="language">Language scope</h2>
+        <p>
+          No loops, functions, variables, imports, shell commands, plugins,
+          networking, service control, or environment interpolation. This
+          constraint is what lets every shipped mutation have defined planning
+          and inverse behavior.
+        </p>
+        <p>
+          See the repository
+          <a href="https://github.com/daniel-oluwadunsin/undolang/blob/main/docs/SUPPORT_MATRIX.md">support matrix</a> for exact
+          test status.
+        </p>
+      </main>
+      <aside class="toc">
+        <strong>On this page</strong><a href="#atomicity">Atomicity</a
+        ><a href="#platform">Platforms</a><a href="#metadata">Metadata</a
+        ><a href="#objects">Objects</a><a href="#recovery">Recovery</a
+        ><a href="#language">Language</a>
+      </aside>
+    </div>
+    <script src="../assets/site.js"></script>
+  </body>
+</html>

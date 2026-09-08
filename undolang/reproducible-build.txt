@@ -1,0 +1,13 @@
+UndoLang 0.1.0 reproducible-build proof
+Captured: 2026-08-29, macOS arm64 (fresh run during final readiness audit)
+Toolchain: go version go1.27.0 darwin/arm64
+Environment: CGO_ENABLED=0, GOTOOLCHAIN=go1.27.0, GOPROXY=off
+Command (run twice): go build -trimpath -buildvcs=false -o <temporary-output> ./cmd/undo
+
+Build A SHA-256: 6a7b1ba6a62e911d4ab93759a9809615efda8369d7347a5e562bc7d336771d2d
+Build B SHA-256: 6a7b1ba6a62e911d4ab93759a9809615efda8369d7347a5e562bc7d336771d2d
+
+Comparison performed by tools/buildproof using crypto/sha256 and io.Copy.
+Result: PASS — outputs were byte-identical.
+
+No timestamp, source path, random value, host name, user name, or VCS status is injected into the binary. The build uses -trimpath and -buildvcs=false; no additional linker build-ID override was necessary.

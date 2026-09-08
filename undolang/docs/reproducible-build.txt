@@ -1,0 +1,7 @@
+Canonical reproducibility evidence: ../reproducible-build.txt
+
+Toolchain: go version go1.27.0 darwin/arm64
+Command: CGO_ENABLED=0 GOTOOLCHAIN=go1.27.0 GOPROXY=off go build -trimpath -buildvcs=false ./cmd/undo
+Build A: 6a7b1ba6a62e911d4ab93759a9809615efda8369d7347a5e562bc7d336771d2d
+Build B: 6a7b1ba6a62e911d4ab93759a9809615efda8369d7347a5e562bc7d336771d2d
+Result: PASS — byte-identical.

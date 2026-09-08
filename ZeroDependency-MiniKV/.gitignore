@@ -1,0 +1,18 @@
+# Build output
+/minikv
+/minikv.exe
+
+# Database files created while running/testing locally
+*.db
+*.db.compact.tmp
+*.preRestore.*
+*.bak
+
+# Editor / OS metadata
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Go build/test caches (if ever created locally)
+/coverage.out

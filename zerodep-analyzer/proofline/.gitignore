@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyz
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.eggs/
+report.html
+proofline_source.zip

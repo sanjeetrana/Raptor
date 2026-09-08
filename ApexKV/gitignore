@@ -1,0 +1,11 @@
+# Compiled files
+*.exe
+*.o
+
+# CMake build folder
+build/
+
+# VS Code files
+.vscode/
+
+*.log

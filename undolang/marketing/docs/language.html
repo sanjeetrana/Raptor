@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Language Reference · UndoLang</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="wrap masthead-row">
+        <a class="brand" href="../index.html">UndoLang</a
+        ><span class="edition">Language Reference</span
+        ><button class="menu secondary" data-menu aria-expanded="false">
+          Contents
+        </button>
+        <nav class="nav">
+          <a href="index.html">Docs home</a
+          ><a href="programs.html">Next: Programs</a>
+        </nav>
+      </div>
+    </header>
+    <div class="docs-shell">
+      <aside class="sidebar" data-sidebar>
+        <strong>Documentation</strong><a href="index.html">Overview</a
+        ><a href="getting-started.html">Getting started</a
+        ><a aria-current="page" href="language.html">Language</a
+        ><a href="programs.html">Programs</a
+        ><a href="transactions.html">Transactions</a
+        ><a href="paths.html">Paths</a><a href="agents.html">AI agents</a
+        ><a href="security.html">Security</a
+        ><a href="limitations.html">Limitations</a>
+      </aside>
+      <main class="doc">
+        <p class="kicker">undo-dsl/1</p>
+        <h1>Small enough to reason about.</h1>
+        <p>
+          Every file contains one or more uniquely named transactions. Inside
+          each transaction the grammar is strict: <code>require*</code>, then
+          mutations, then <code>assert*</code>.
+        </p>
+        <h2 id="grammar">Grammar</h2>
+        <pre><code>program     = transaction+
+transaction = "transaction" STRING "{" require* mutation* assert* "}"
+require     = "require" condition
+assert      = "assert" condition</code></pre>
+        <h2 id="operations">Operations</h2>
+        <table>
+          <tr>
+            <th>Syntax</th>
+            <th>Effect</th>
+          </tr>
+          <tr>
+            <td><code>mkdir PATH</code></td>
+            <td>Create missing directory parents.</td>
+          </tr>
+          <tr>
+            <td><code>copy SOURCE -&gt; TARGET [overwrite]</code></td>
+            <td>Stream-copy a regular file or tree.</td>
+          </tr>
+          <tr>
+            <td><code>move SOURCE -&gt; TARGET [overwrite]</code></td>
+            <td>Move an entry, with verified cross-capability fallback.</td>
+          </tr>
+          <tr>
+            <td><code>write PATH = STRING</code></td>
+            <td>Create or replace a regular file.</td>
+          </tr>
+          <tr>
+            <td><code>replace PATH OLD -&gt; NEW</code></td>
+            <td>Literal non-overlapping left-to-right replacement.</td>
+          </tr>
+          <tr>
+            <td><code>delete PATH</code></td>
+            <td>Delete a file, directory tree, or symlink entry.</td>
+          </tr>
+        </table>
+        <h2 id="conditions">Conditions</h2>
+        <p>
+          <code>exists</code>, <code>not_exists</code>, <code>is_file</code>,
+          <code>is_dir</code>, <code>contains PATH TEXT</code>, and
+          <code>sha256 PATH = HEX</code>. SHA-256 is 64 hexadecimal characters.
+          Empty contains and replace needles are invalid.
+        </p>
+        <h2 id="strings">Strings, comments, paths</h2>
+        <p>
+          Quoted strings support backslash, quote, newline, carriage-return,
+          tab, and <code>\uXXXX</code> escapes. Backtick raw strings keep
+          Windows paths readable. Use <code>#</code> for line comments. There
+          are no variables, imports, loops,
+          functions, shell commands, environment expansion, or network calls.
+        </p>
+        <pre><code class="language-undolang">transaction "windows-config" {
+  require is_file `C:\staging\app.conf`
+  copy `C:\staging\app.conf` -> `C:\ProgramData\Acme\app.conf` overwrite
+  assert is_file `C:\ProgramData\Acme\app.conf`
+}</code></pre>
+      </main>
+      <aside class="toc">
+        <strong>On this page</strong><a href="#grammar">Grammar</a
+        ><a href="#operations">Operations</a><a href="#conditions">Conditions</a
+        ><a href="#strings">Strings</a>
+      </aside>
+    </div>
+    <script src="../assets/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 48" role="img" aria-label="Branchcut">
+  <style>
+    .pruned {
+      stroke: #c8d8d2;
+    }
+
+    .active {
+      stroke: #3ddc97;
+    }
+
+    @media (prefers-color-scheme: light) {
+      .pruned {
+        stroke: #24483e;
+      }
+
+      .active {
+        stroke: #087a52;
+      }
+    }
+  </style>
+
+  <!-- Two candidate routes terminate early; their square ends read as clean cuts. -->
+  <path
+    class="pruned"
+    d="M35 24H59M35 24 51 40H68"
+    fill="none"
+    stroke-width="7"
+    stroke-linecap="butt"
+    stroke-linejoin="miter"
+  />
+
+  <!-- The selected route enters from the left and continues across the cut tree. -->
+  <path
+    class="active"
+    d="M6 24H35L52 7H82"
+    fill="none"
+    stroke-width="7"
+    stroke-linecap="butt"
+    stroke-linejoin="miter"
+  />
+</svg>

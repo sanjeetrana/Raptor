@@ -1,0 +1,32 @@
+UNDOLANG AGENT CONTEXT — undo-cli/1 / undo-dsl/1
+
+UndoLang is a crash-safe filesystem transaction runtime and small DSL. A .undo file is a program containing one or more uniquely named transactions. Each transaction is an independent rollback boundary. Running a file executes transactions in source order and fails fast: earlier commits remain committed, the failing transaction rolls back, and later entries are skipped.
+
+WORKFLOW
+1. undo capabilities --json
+2. undo schema --json
+3. undo check FILE --root ROOT --json
+4. undo plan FILE --root ROOT --json
+5. Present effects, destructive operations, capabilities, and rollback estimates for approval.
+6. undo run FILE --root ROOT --yes --json
+7. If recovery_required: undo recover --root ROOT --yes --json
+
+JSON never grants approval. Noninteractive mutation requires --yes. Read api_version, ok, error.code, error.message, transaction_id, recovery guidance, and ordered transaction statuses. Selected plans are exact. Multi-transaction whole-file plans make only the first transaction exact and defer later state-sensitive checks; run freshly plans each transaction before it starts.
+
+LANGUAGE
+transaction "name" { require* mutation* assert* }
+Mutations: mkdir PATH; copy SOURCE -> TARGET [overwrite]; move SOURCE -> TARGET [overwrite]; write PATH = STRING; replace PATH OLD -> NEW; delete PATH.
+Conditions: exists PATH; not_exists PATH; is_file PATH; is_dir PATH; contains PATH TEXT; sha256 PATH = 64_HEX.
+Quoted strings support backslash, quote, newline, carriage return, tab, and Unicode escapes. Backtick raw strings support Windows-friendly paths. Comments use # or //. There are no variables, loops, functions, imports, shell execution, plugins, network calls, or environment interpolation.
+
+PATHS
+Relative paths bind to --root or invocation cwd, never script location. Absolute paths outside root require repeatable --allow-path capabilities. Actual access uses os.Root. Traversal, unsafe symlink parents, root mutation, and .undo are rejected. Moving/deleting a symlink affects the entry; symlink copy and special files are unsupported.
+
+INSTALLATION
+A prebuilt binary needs no Go. For a source checkout, install.sh (macOS/Linux) and install.ps1 (Windows) reuse Go 1.27.x when present. If it is missing or older, they download the official Go 1.27.0 archive from go.dev, verify its pinned SHA-256 checksum, and place it in a user-local UndoLang toolchain directory; no administrator access is needed. Use install.sh --no-install-go or install.ps1 -NoInstallGo to require an offline/local-only install. Runtime behavior still has no external dependency.
+
+RECOVERY
+Before mutation the runtime verifies backups and syncs OP_PREPARED with before/after descriptors. After verified mutation it syncs OP_APPLIED. Assertions run after all operations. Known failures replay the durable journal and reverse operations. A fresh recover process resumes interrupted rollback. An incomplete final frame can be truncated after a valid prefix; complete corruption or filesystem state matching neither before nor expected after fails closed and retains backups.
+
+LIMITS
+No isolation or atomic visibility across many files. Platform rename/fsync behavior differs. One active transaction per primary root; overlapping external capabilities can race. Ownership, ACLs, xattrs, timestamps, sparse allocation, resource forks, alternate streams, and hard-link identity are not preserved. macOS arm64 is behavior-tested in the current project; other documented targets are cross-built only.

@@ -1,0 +1,20 @@
+target/
+.repro/
+
+# build outputs (Unix and Windows)
+stranger
+stranger.exe
+*.pdb
+*.exe
+*.o
+*.obj
+
+# scratch from the repro check
+a.exe
+b.exe
+
+# personal recording script, not part of the submission
+DEMO.md
+
+# write-up draft for dev.to, not part of the submission
+writeup.md

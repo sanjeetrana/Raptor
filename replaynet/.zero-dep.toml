@@ -1,0 +1,17 @@
+[package]
+name = "replaynet"
+track = "C"
+description = "Record real HTTP once, replay it offline with fault injection and a live SSE inspector — Go stdlib only"
+version = "0.1.0"
+license = "MIT"
+language = "go"
+stdlib_only = true
+
+[package_killer]
+target = "toxiproxy"
+claim = "Stdlib-only network fault injection plus deterministic HTTP record/replay Toxiproxy does not provide"
+
+[bonuses]
+reproducible_build = true
+package_killer = true
+stdlib_log = true

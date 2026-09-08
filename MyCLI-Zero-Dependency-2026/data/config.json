@@ -1,0 +1,6 @@
+{
+  "theme": "dark",
+  "defaultShell": "powershell",
+  "confirmDestructive": true,
+  "notifications": true
+}

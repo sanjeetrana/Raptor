@@ -1,0 +1,12 @@
+# Empty manifest proof for Proofline
+# The project inherently uses exactly 0 third-party dependencies.
+# A requirements.txt does not exist in this project.
+# Running `pip list` in a clean virtual environment yields only core pip packages:
+
+Package    Version
+---------- -------
+pip        24.0
+setuptools 69.1.1
+wheel      0.42.0
+
+# Zero third-party RUNTIME dependencies.

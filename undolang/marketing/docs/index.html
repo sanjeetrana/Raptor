@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>UndoLang Documentation</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <header class="masthead">
+      <div class="wrap masthead-row">
+        <a class="brand" href="../index.html">UndoLang</a
+        ><span class="edition">Documentation · undo-cli/1</span
+        ><button class="menu secondary" data-menu aria-expanded="false">
+          Contents
+        </button>
+        <nav class="nav" data-navigation>
+          <a href="getting-started.html">Start</a
+          ><a href="language.html">Language</a><a href="agents.html">Agents</a
+          ><a href="https://github.com/daniel-oluwadunsin/undolang">GitHub</a>
+        </nav>
+      </div>
+    </header>
+    <div class="docs-shell">
+      <aside class="sidebar" data-sidebar>
+        <strong>Documentation</strong
+        ><a aria-current="page" href="index.html">Overview</a
+        ><a href="getting-started.html">Getting started</a
+        ><a href="language.html">Language</a><a href="programs.html">Programs</a
+        ><a href="transactions.html">Transactions & recovery</a
+        ><a href="paths.html">Paths & capabilities</a
+        ><a href="agents.html">AI agents</a><a href="security.html">Security</a
+        ><a href="limitations.html">Limitations</a>
+      </aside>
+      <main class="doc" id="content">
+        <p class="kicker">Documentation</p>
+        <h1>Make filesystem intent inspectable.</h1>
+        <p class="dek">
+          UndoLang combines a deliberately small language with current-state
+          planning, durable operation records, verified inverse metadata, and
+          explicit recovery.
+        </p>
+        <div class="callout redline">
+          <strong>Core model:</strong> the file is a program; each named
+          transaction is its own recoverable boundary.
+        </div>
+        <h2 id="workflow">The workflow</h2>
+        <div class="grid grid-2">
+          <div class="cell">
+            <h3>1. Author and check</h3>
+            <p>
+              Write one or more transactions, then validate the complete file
+              with <code>undo check</code>.
+            </p>
+          </div>
+          <div class="cell">
+            <h3>2. Plan</h3>
+            <p>
+              Inspect paths, effects, destructive operations, conditions, and
+              rollback estimates without mutation.
+            </p>
+          </div>
+          <div class="cell">
+            <h3>3. Approve and run</h3>
+            <p>
+              Humans confirm interactively. Agents and other noninteractive
+              callers pass explicit <code>--yes</code>.
+            </p>
+          </div>
+          <div class="cell">
+            <h3>4. Recover if interrupted</h3>
+            <p>
+              <code>undo recover</code> validates durable state and resumes
+              rollback from a fresh process.
+            </p>
+          </div>
+        </div>
+        <h2 id="find">Find an answer</h2>
+        <table>
+          <tr>
+            <th>Question</th>
+            <th>Read</th>
+          </tr>
+          <tr>
+            <td>How do I install and run my first program?</td>
+            <td><a href="getting-started.html">Getting started</a></td>
+          </tr>
+          <tr>
+            <td>What syntax and operations exist?</td>
+            <td><a href="language.html">Language reference</a></td>
+          </tr>
+          <tr>
+            <td>What happens when transaction B fails?</td>
+            <td><a href="programs.html">Programs</a></td>
+          </tr>
+          <tr>
+            <td>What survives a process kill?</td>
+            <td><a href="transactions.html">Transactions & recovery</a></td>
+          </tr>
+          <tr>
+            <td>How should an agent use JSON?</td>
+            <td><a href="agents.html">AI agents</a></td>
+          </tr>
+        </table>
+      </main>
+      <aside class="toc">
+        <strong>On this page</strong><a href="#workflow">Workflow</a
+        ><a href="#find">Find an answer</a>
+      </aside>
+    </div>
+    <script src="../assets/site.js"></script>
+  </body>
+</html>

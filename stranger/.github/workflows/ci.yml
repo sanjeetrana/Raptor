@@ -1,0 +1,41 @@
+name: ci
+
+# The CI log is part of the dependency proof: `cargo tree` runs here on a
+# clean runner, so a judge can confirm the empty manifest without trusting a
+# file committed to the repo.
+
+on: [push, pull_request]
+
+jobs:
+  zero-dependency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show the dependency tree
+        run: cargo tree
+
+      - name: Fail if any third-party dependency exists
+        run: |
+          COUNT=$(grep -c '^\[\[package\]\]' Cargo.lock)
+          echo "[[package]] blocks in Cargo.lock: $COUNT"
+          test "$COUNT" -eq 1 || { echo "::error::third-party dependency found"; exit 1; }
+          cargo tree | tail -n +2 | grep . && { echo "::error::non-empty tree"; exit 1; } || true
+
+      - name: Build (one rustc call, one file)
+        run: make build
+
+      - name: Test
+        run: make test
+
+      - name: Reproducible build
+        run: make repro
+
+      - name: Audit ourselves
+        run: ./stranger audit Cargo.lock --fail-on high
+
+      - name: Catch the compromised fixture
+        run: |
+          ./stranger audit examples/compromised-lock.json --fail-on high && {
+            echo "::error::the compromised fixture should have failed the gate"; exit 1
+          } || echo "correctly flagged"

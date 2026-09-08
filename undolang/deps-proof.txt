@@ -1,0 +1,69 @@
+UndoLang 0.1.0 zero-dependency proof
+Captured: 2026-08-29, macOS arm64, final readiness audit
+Toolchain: go version go1.27.0 darwin/arm64
+
+$ GOTOOLCHAIN=go1.27.0 GOPROXY=off go list -m all
+github.com/daniel-oluwadunsin/undolang
+
+$ test ! -e go.sum && echo "go.sum: absent"
+go.sum: absent
+
+$ cat go.mod
+module github.com/daniel-oluwadunsin/undolang
+
+go 1.27
+
+$ GOTOOLCHAIN=go1.27.0 GOPROXY=off go list -deps -f '{{if not .Standard}}{{.ImportPath}}{{end}}' ./...
+github.com/daniel-oluwadunsin/undolang/internal/buildinfo
+github.com/daniel-oluwadunsin/undolang/internal/lang/token
+github.com/daniel-oluwadunsin/undolang/internal/lang/ast
+github.com/daniel-oluwadunsin/undolang/internal/pathcap
+github.com/daniel-oluwadunsin/undolang/internal/streamutil
+github.com/daniel-oluwadunsin/undolang/internal/fsop
+github.com/daniel-oluwadunsin/undolang/internal/journal
+github.com/daniel-oluwadunsin/undolang/internal/lang/diag
+github.com/daniel-oluwadunsin/undolang/internal/lang/lexer
+github.com/daniel-oluwadunsin/undolang/internal/lang/parser
+github.com/daniel-oluwadunsin/undolang/internal/lang/validate
+github.com/daniel-oluwadunsin/undolang/internal/lang/frontend
+github.com/daniel-oluwadunsin/undolang/internal/condition
+github.com/daniel-oluwadunsin/undolang/internal/plan
+github.com/daniel-oluwadunsin/undolang/internal/state
+github.com/daniel-oluwadunsin/undolang/internal/recovery
+github.com/daniel-oluwadunsin/undolang/internal/txn
+github.com/daniel-oluwadunsin/undolang/internal/program
+github.com/daniel-oluwadunsin/undolang/internal/report
+github.com/daniel-oluwadunsin/undolang/internal/cli
+github.com/daniel-oluwadunsin/undolang/cmd/undo
+github.com/daniel-oluwadunsin/undolang/tests
+github.com/daniel-oluwadunsin/undolang/tools/buildproof
+
+$ ./scripts/deps-proof.sh
+github.com/daniel-oluwadunsin/undolang
+?    github.com/daniel-oluwadunsin/undolang/cmd/undo [no test files]
+?    github.com/daniel-oluwadunsin/undolang/internal/buildinfo [no test files]
+ok   github.com/daniel-oluwadunsin/undolang/internal/cli (cached)
+ok   github.com/daniel-oluwadunsin/undolang/internal/condition (cached)
+ok   github.com/daniel-oluwadunsin/undolang/internal/fsop (cached)
+ok   github.com/daniel-oluwadunsin/undolang/internal/journal (cached)
+?    github.com/daniel-oluwadunsin/undolang/internal/lang/ast [no test files]
+?    github.com/daniel-oluwadunsin/undolang/internal/lang/diag [no test files]
+?    github.com/daniel-oluwadunsin/undolang/internal/lang/frontend [no test files]
+ok   github.com/daniel-oluwadunsin/undolang/internal/lang/lexer (cached)
+ok   github.com/daniel-oluwadunsin/undolang/internal/lang/parser (cached)
+?    github.com/daniel-oluwadunsin/undolang/internal/lang/token [no test files]
+ok   github.com/daniel-oluwadunsin/undolang/internal/lang/validate (cached)
+ok   github.com/daniel-oluwadunsin/undolang/internal/pathcap (cached)
+ok   github.com/daniel-oluwadunsin/undolang/internal/plan (cached)
+ok   github.com/daniel-oluwadunsin/undolang/internal/program (cached)
+ok   github.com/daniel-oluwadunsin/undolang/internal/recovery (cached)
+?    github.com/daniel-oluwadunsin/undolang/internal/report [no test files]
+ok   github.com/daniel-oluwadunsin/undolang/internal/state (cached)
+ok   github.com/daniel-oluwadunsin/undolang/internal/streamutil (cached)
+?    github.com/daniel-oluwadunsin/undolang/internal/txn [no test files]
+ok   github.com/daniel-oluwadunsin/undolang/tests 0.811s
+?    github.com/daniel-oluwadunsin/undolang/tools/buildproof [no test files]
+offline build: PASS
+
+Result: PASS — one main module, no require block, no go.sum, and no third-party
+module or import.

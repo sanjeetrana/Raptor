@@ -1,0 +1,23 @@
+{
+  "name": "zero-vault",
+  "version": "0.1.0",
+  "description": "ZeroVault — secure encrypted secret vault with zero runtime dependencies",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "zerovault": "./bin/zerovault.js"
+  },
+  "scripts": {
+    "start": "node bin/zerovault.js serve",
+    "cli": "node bin/zerovault.js",
+    "test": "node --test tests/*.test.js",
+    "test:verbose": "node --test --reporter=spec tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=25.0.0"
+  },
+  "keywords": ["vault", "crypto", "security", "zero-dependency"],
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

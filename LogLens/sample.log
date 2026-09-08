@@ -1,0 +1,16 @@
+2026-08-28 09:00:01 INFO Server started
+2026-08-28 09:05:20 INFO User login successful
+2026-08-28 09:10:12 WARNING High memory usage
+2026-08-28 09:15:32 ERROR Database connection failed for user 101
+2026-08-28 09:16:45 ERROR Database connection failed for user 102
+2026-08-28 09:20:10 INFO User logout
+2026-08-28 09:25:22 WARNING Slow response time
+2026-08-28 09:30:15 ERROR Database connection failed for user 103
+2026-08-28 09:35:10 INFO Backup completed
+2026-08-28 10:10:11 DEBUG Cache refreshed
+2026-08-28 10:15:30 WARNING Memory usage high
+2026-08-28 10:20:44 ERROR Request timeout for user 201
+2026-08-28 10:21:44 ERROR Request timeout for user 202
+2026-08-28 11:00:00 INFO Database connection restored
+2026-08-28 11:15:00 CRITICAL Server storage full
+2026-08-28 11:20:00 INFO Backup started

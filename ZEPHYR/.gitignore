@@ -1,0 +1,18 @@
+# Binaries
+*.exe
+*.exe~
+zephyr
+taskrunner
+b1.exe
+b2.exe
+playground/app.exe
+
+# Cache & Storage
+.taskcache/
+.cache-server/
+
+# OS / Editor Files
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp.*

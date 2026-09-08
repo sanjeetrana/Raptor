@@ -1,0 +1,28 @@
+{
+  "name": "repolens",
+  "version": "1.0.0",
+  "description": "Zero-dependency codebase inspection tool for RepoLens",
+  "main": "src/scanner.js",
+  "scripts": {
+    "start": "node example.js",
+    "report": "node generate-report.js",
+    "test": "node test/run-all-tests.js",
+    "test:scanner": "node test/test-scanner.js",
+    "test:analyzer": "node test/test-analyzer.js",
+    "test:statistics": "node test/test-statistics.js",
+    "test:dependencies": "node test/test-dependencies.js",
+    "test:architecture": "node test/test-architecture.js",
+    "test:start": "node test/test-start.js",
+    "test:routes": "node test/test-routes.js",
+    "test:project": "node test/test-project.js",
+    "test:report": "node test/test-report.js"
+  },
+  "keywords": [
+    "zero-dependency",
+    "code-scanner",
+    "repolens"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}

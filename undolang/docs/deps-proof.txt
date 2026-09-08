@@ -1,0 +1,5 @@
+Canonical dependency evidence: [`../deps-proof.txt`](../deps-proof.txt)
+
+The linked receipt was regenerated from the current checkout on 2026-08-29 with
+Go 1.27.0 on macOS arm64. It records the one-line `go list -m all` output,
+the empty manifest proof, the offline test gate, and the offline canonical build.

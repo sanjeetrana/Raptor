@@ -1,0 +1,4 @@
+name = "UndoLang"
+track = "F"
+language = "Go 1.27"
+pitch = "A crash-recoverable filesystem transaction language with an empty dependency graph."

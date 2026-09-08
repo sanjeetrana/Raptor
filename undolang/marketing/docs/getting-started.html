@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Getting Started · UndoLang</title>
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="wrap masthead-row">
+        <a class="brand" href="../index.html">UndoLang</a
+        ><span class="edition">Getting Started</span
+        ><button class="menu secondary" data-menu aria-expanded="false">
+          Contents
+        </button>
+        <nav class="nav">
+          <a href="index.html">Docs home</a
+          ><a href="language.html">Next: Language</a>
+        </nav>
+      </div>
+    </header>
+    <div class="docs-shell">
+      <aside class="sidebar" data-sidebar>
+        <strong>Documentation</strong><a href="index.html">Overview</a
+        ><a aria-current="page" href="getting-started.html">Getting started</a
+        ><a href="language.html">Language</a><a href="programs.html">Programs</a
+        ><a href="transactions.html">Transactions & recovery</a
+        ><a href="paths.html">Paths</a><a href="agents.html">AI agents</a
+        ><a href="security.html">Security</a
+        ><a href="limitations.html">Limitations</a>
+      </aside>
+      <main class="doc" id="content">
+        <p class="kicker">First useful run</p>
+        <h1>Install, inspect, execute.</h1>
+        <h2 id="requirements">Requirements</h2>
+        <p>
+          A source build requires Go 1.27.x. The resulting native binary
+          requires no Go installation, runtime service, API key, database, or
+          environment variable. <code>NO_COLOR</code> is optional.
+        </p>
+        <p>
+          If you use the source checkout and Go is missing or older than 1.27,
+          the local installer can download the official Go 1.27.0 archive,
+          verify its SHA-256 checksum, and keep it in a user-local toolchain
+          directory. Pass <code>--no-install-go</code> (or
+          <code>-NoInstallGo</code> on PowerShell) to require an offline
+          install.
+        </p>
+        <h2 id="build">Build from source</h2>
+        <div class="copy-row">
+          <button data-copy="#build-code">Copy</button>
+        </div>
+        <pre
+          id="build-code"
+        ><code>git clone https://github.com/daniel-oluwadunsin/undolang
+cd undolang
+go build -trimpath -buildvcs=false -o undo ./cmd/undo
+./undo version</code></pre>
+        <h3>macOS and Linux</h3>
+        <p>
+          Keep the binary anywhere on <code>PATH</code>, or run
+          <code>./install.sh</code> to copy a local binary (or build the local
+          checkout) to <code>~/.local/bin/undo</code>. A source build uses an
+          existing Go 1.27.x when available and otherwise performs the
+          checksum-verified user-local Go bootstrap described above.
+        </p>
+        <h3>Windows</h3>
+        <p>
+          Build with
+          <code>go build -trimpath -buildvcs=false -o undo.exe ./cmd/undo</code
+          >. Run <code>.\install.ps1</code> to copy the local binary to
+          <code>%LOCALAPPDATA%\UndoLang\bin</code>; add that directory to the
+          user PATH when prompted. If the checkout needs a compiler, the
+          script can bootstrap Go 1.27.0 locally; pass
+          <code>-NoInstallGo</code> to disable that.
+        </p>
+        <h2 id="first-program">Your first program</h2>
+        <pre><code class="language-undolang">transaction "initialize" {
+  require not_exists "VERSION"
+  mkdir "data"
+  write "VERSION" = "1"
+  assert is_dir "data"
+  assert contains "VERSION" "1"
+}</code></pre>
+        <p>
+          Save this as <code>setup.undo</code>. The script can live anywhere;
+          paths bind to the root passed below.
+        </p>
+        <pre><code>undo check setup.undo --root ./demo
+undo plan setup.undo --root ./demo
+undo run setup.undo --root ./demo
+# noninteractive:
+undo run setup.undo --root ./demo --yes --json</code></pre>
+        <h2 id="recovery">Recovery basics</h2>
+        <p>
+          If a process stops with an unresolved transaction, new mutation is
+          blocked. Run <code>undo recover --root ./demo --yes</code>. Inspect
+          retained or finalized metadata with <code>undo history</code> and
+          <code>undo inspect TXID</code>.
+        </p>
+      </main>
+      <aside class="toc">
+        <strong>On this page</strong><a href="#requirements">Requirements</a
+        ><a href="#build">Build</a><a href="#first-program">First program</a
+        ><a href="#recovery">Recovery</a>
+      </aside>
+    </div>
+    <script src="../assets/site.js"></script>
+  </body>
+</html>

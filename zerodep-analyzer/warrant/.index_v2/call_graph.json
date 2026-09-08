@@ -1,0 +1,78 @@
+{
+  "caller_counts": {
+    "src.auth.validate_token": 5,
+    "src.auth.get_current_user": 0,
+    "src.auth.login": 2,
+    "src.auth.AuthService.__init__": 0,
+    "src.auth.AuthService.is_authenticated": 0,
+    "src.auth.AuthService.logout": 0,
+    "src.orders.create_order": 2,
+    "src.orders.cancel_order": 1,
+    "src.orders.list_orders": 1,
+    "src.orders._internal_helper": 0,
+    "src.orders.super_risky": 0,
+    "src.routes.get_orders": 0,
+    "src.routes.post_order": 0,
+    "src.routes.health_check": 0,
+    "src.utils.hash_password": 0,
+    "src.utils.validate_email": 0,
+    "src.utils.slugify": 0,
+    "src.utils.paginate": 0,
+    "tests.test_auth.TestValidateToken.test_validate_token_malformed": 0,
+    "tests.test_auth.TestValidateToken.test_validate_token_wrong_parts": 0,
+    "tests.test_auth.TestValidateToken.test_login_valid": 0,
+    "tests.test_auth.TestValidateToken.test_login_invalid": 0,
+    "tests.test_auth.TestValidateToken.test_auth_service_caches": 0,
+    "tests.test_orders.TestOrders.test_create_order_bad_qty": 0,
+    "tests.test_orders.TestOrders.test_cancel_order_bad_token": 0
+  },
+  "outbound": {
+    "src.auth.validate_token": [],
+    "src.auth.get_current_user": [
+      "src.auth.validate_token"
+    ],
+    "src.auth.login": [],
+    "src.auth.AuthService.__init__": [],
+    "src.auth.AuthService.is_authenticated": [
+      "src.auth.validate_token"
+    ],
+    "src.auth.AuthService.logout": [],
+    "src.orders.create_order": [],
+    "src.orders.cancel_order": [
+      "src.auth.validate_token"
+    ],
+    "src.orders.list_orders": [],
+    "src.orders._internal_helper": [],
+    "src.orders.super_risky": [],
+    "src.routes.get_orders": [
+      "src.orders.list_orders"
+    ],
+    "src.routes.post_order": [
+      "src.orders.create_order"
+    ],
+    "src.routes.health_check": [],
+    "src.utils.hash_password": [],
+    "src.utils.validate_email": [],
+    "src.utils.slugify": [],
+    "src.utils.paginate": [],
+    "tests.test_auth.TestValidateToken.test_validate_token_malformed": [
+      "src.auth.validate_token"
+    ],
+    "tests.test_auth.TestValidateToken.test_validate_token_wrong_parts": [
+      "src.auth.validate_token"
+    ],
+    "tests.test_auth.TestValidateToken.test_login_valid": [
+      "src.auth.login"
+    ],
+    "tests.test_auth.TestValidateToken.test_login_invalid": [
+      "src.auth.login"
+    ],
+    "tests.test_auth.TestValidateToken.test_auth_service_caches": [],
+    "tests.test_orders.TestOrders.test_create_order_bad_qty": [
+      "src.orders.create_order"
+    ],
+    "tests.test_orders.TestOrders.test_cancel_order_bad_token": [
+      "src.orders.cancel_order"
+    ]
+  }
+}

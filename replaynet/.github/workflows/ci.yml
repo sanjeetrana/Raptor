@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build-and-test:
+    name: Build & Test (Zero-Deps Verification)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Minimum supported toolchain (go.mod)
+          - os: ubuntu-latest
+            go: '1.22'
+          # Current stable on Linux
+          - os: ubuntu-latest
+            go: '1.24'
+          # macos-latest (Tahoe) requires Go ≥1.24 for LC_UUID in Mach-O
+          # (dyld aborts older toolchains: "missing LC_UUID load command")
+          - os: macos-latest
+            go: '1.24'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Verify Zero Dependencies
+        run: |
+          make deps-proof
+          cat deps-proof.txt
+          test $(wc -l < deps-proof.txt) -eq 1
+          echo "Verified: 0 third-party runtime dependencies."
+
+      - name: Build Binary
+        run: make build
+
+      - name: Run Test Suite
+        run: make test
+
+      - name: Run Performance Benchmarks
+        run: make bench
+
+      - name: Verify Reproducible Build
+        run: make repro
+
+      - name: Run Automated Demo Workflow
+        run: ./scripts/demo.sh

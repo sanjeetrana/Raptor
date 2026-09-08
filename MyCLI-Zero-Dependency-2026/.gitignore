@@ -1,0 +1,15 @@
+node_modules/
+dist/
+release/
+logs/
+*.log
+*.tmp
+*.cache
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.env
+.env.*
+BUILD_HASH.txt
+coverage/

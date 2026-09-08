@@ -1,0 +1,23 @@
+# Reproducible build proof — x86_64-pc-windows-msvc
+# Generated 2026-08-30T16:04:30Z by tools/repro-windows.sh
+#
+# Reproducibility is per-target. deps-proof.txt carries the Linux
+# result and the empty-manifest evidence; this file carries Windows.
+
+$ rustc -vV
+rustc 1.96.0 (ac68faa20 2026-05-25)
+binary: rustc
+commit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96
+commit-date: 2026-05-25
+host: x86_64-pc-windows-msvc
+release: 1.96.0
+LLVM version: 22.1.2
+
+$ flags
+-C codegen-units=1 -C debuginfo=0 -C strip=symbols -C metadata=stranger-1.0.0 -C link-arg=/Brepro -C link-arg=/DEBUG:NONE
+
+$ rustc -O $FLAGS --remap-path-prefix="$(pwd -W)=." -o a.exe src/main.rs   # twice
+
+build 1: 1b1235fe383a0308dd17bacf4672f489acf7ab42cede1dffbc5af04ab9801f9a
+build 2: 1b1235fe383a0308dd17bacf4672f489acf7ab42cede1dffbc5af04ab9801f9a
+REPRODUCIBLE: byte-identical

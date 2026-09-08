@@ -1,0 +1,40 @@
+[package]
+name = "stranger"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Offline supply-chain auditor for dependency lockfiles. Zero third-party dependencies."
+license = "MIT"
+repository = "https://github.com/anish/stranger"
+
+# ---------------------------------------------------------------------------
+# THE POINT OF THIS FILE.
+#
+# This block is empty and stays empty. Not "small". Not "only well-known
+# crates". Empty. Every byte of parsing, hashing, graph traversal, string
+# distance and terminal rendering in this program is in src/main.rs.
+#
+#   $ cargo tree
+#   stranger v1.0.0
+#
+# That is the entire tree.
+# ---------------------------------------------------------------------------
+[dependencies]
+
+[dev-dependencies]
+# Empty as well. Tests are #[cfg(test)] blocks inside src/main.rs, run by
+# `cargo test`, which is the standard-library test harness. No test crates.
+
+[[bin]]
+name = "stranger"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+# Determinism: no incremental compilation, single codegen unit, stripped
+# symbols. See `make repro`.
+incremental = false

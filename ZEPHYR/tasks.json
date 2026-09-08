@@ -1,0 +1,41 @@
+{
+  "default": "build",
+  "tasks": {
+    "lint": {
+      "command": "go vet ./...",
+      "inputs": ["**/*.go"],
+      "outputs": [],
+      "timeout": "1m"
+    },
+    "build": {
+      "command": "go build -o bin/taskrunner-demo main.go",
+      "inputs": ["main.go", "go.mod"],
+      "outputs": ["bin/taskrunner-demo", "bin/taskrunner-demo.exe"],
+      "depends_on": ["lint"],
+      "env_vars": ["GOOS", "GOARCH", "APP_ENV"],
+      "timeout": "2m"
+    },
+    "test:unit": {
+      "command": "go test -v -run TestDAG ./...",
+      "inputs": ["**/*.go"],
+      "outputs": [],
+      "depends_on": ["lint"],
+      "timeout": "1m",
+      "retries": 1
+    },
+    "test:integration": {
+      "command": "go test -v -run TestPipeline ./...",
+      "inputs": ["**/*.go", "tasks.json"],
+      "outputs": [],
+      "depends_on": ["build", "test:unit"],
+      "timeout": "2m"
+    },
+    "package": {
+      "command": "go version",
+      "inputs": ["bin/taskrunner-demo*", "README.md"],
+      "outputs": [],
+      "depends_on": ["test:integration"],
+      "env_vars": ["APP_ENV"]
+    }
+  }
+}

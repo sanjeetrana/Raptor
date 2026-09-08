@@ -1,0 +1,46 @@
+RepoLens - Zero Dependency Proof
+================================
+
+Project:
+RepoLens
+
+Purpose:
+Proof that RepoLens has no third-party runtime dependencies.
+
+Node.js Version
+---------------
+Command:
+node --version
+
+Output:
+v24.18.0
+
+
+Package Dependencies
+--------------------
+Command:
+npm pkg get dependencies
+
+Output:
+{}
+
+
+Installed Top-Level Dependencies
+---------------------------------
+Command:
+npm ls --depth=0
+
+Output:
+repolens@1.0.0 D:\Clg Stuff\Projects\Repolens
+└── (empty)
+
+
+Conclusion
+----------
+RepoLens has no third-party runtime dependencies.
+
+The project is implemented using Node.js standard-library modules
+and native JavaScript features.
+
+No npm package is required at runtime for the RepoLens analysis
+pipeline.

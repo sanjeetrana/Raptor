@@ -1,0 +1,338 @@
+{
+  "src.auth.validate_token": {
+    "label": "PROVEN",
+    "test_count": 2,
+    "test_names": [
+      "tests.test_auth.TestValidateToken.test_validate_token_malformed",
+      "tests.test_auth.TestValidateToken.test_validate_token_wrong_parts"
+    ],
+    "caller_count": 5,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.auth.get_current_user": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.auth.login": {
+    "label": "PROVEN",
+    "test_count": 2,
+    "test_names": [
+      "tests.test_auth.TestValidateToken.test_login_valid",
+      "tests.test_auth.TestValidateToken.test_login_invalid"
+    ],
+    "caller_count": 2,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.auth.AuthService.__init__": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": false,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": true,
+      "reason": "recently changed but docstring is absent or very short"
+    }
+  },
+  "src.auth.AuthService.is_authenticated": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.auth.AuthService.logout": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.orders.create_order": {
+    "label": "PROVEN",
+    "test_count": 1,
+    "test_names": [
+      "tests.test_orders.TestOrders.test_create_order_bad_qty"
+    ],
+    "caller_count": 2,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.orders.cancel_order": {
+    "label": "PROVEN",
+    "test_count": 1,
+    "test_names": [
+      "tests.test_orders.TestOrders.test_cancel_order_bad_token"
+    ],
+    "caller_count": 1,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.orders.list_orders": {
+    "label": "INFERRED",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 1,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.orders._internal_helper": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": false,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.routes.get_orders": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.routes.post_order": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": false,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.routes.health_check": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": false,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.utils.hash_password": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.utils.validate_email": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.utils.slugify": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": false,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "src.utils.paginate": {
+    "label": "UNKNOWN",
+    "test_count": 0,
+    "test_names": [],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": false,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "tests.test_auth.TestValidateToken.test_validate_token_malformed": {
+    "label": "INFERRED",
+    "test_count": 1,
+    "test_names": [
+      "tests.test_auth.TestValidateToken.test_validate_token_malformed"
+    ],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "tests.test_auth.TestValidateToken.test_validate_token_wrong_parts": {
+    "label": "INFERRED",
+    "test_count": 1,
+    "test_names": [
+      "tests.test_auth.TestValidateToken.test_validate_token_wrong_parts"
+    ],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": true,
+      "reason": "recently changed but docstring is absent or very short"
+    }
+  },
+  "tests.test_auth.TestValidateToken.test_login_valid": {
+    "label": "INFERRED",
+    "test_count": 1,
+    "test_names": [
+      "tests.test_auth.TestValidateToken.test_login_valid"
+    ],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": true,
+      "reason": "recently changed but docstring is absent or very short"
+    }
+  },
+  "tests.test_auth.TestValidateToken.test_login_invalid": {
+    "label": "INFERRED",
+    "test_count": 1,
+    "test_names": [
+      "tests.test_auth.TestValidateToken.test_login_invalid"
+    ],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": true,
+      "reason": "recently changed but docstring is absent or very short"
+    }
+  },
+  "tests.test_auth.TestValidateToken.test_auth_service_caches": {
+    "label": "INFERRED",
+    "test_count": 1,
+    "test_names": [
+      "tests.test_auth.TestValidateToken.test_auth_service_caches"
+    ],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": true,
+      "reason": "recently changed but docstring is absent or very short"
+    }
+  },
+  "tests.test_orders.TestOrders.test_create_order_bad_qty": {
+    "label": "INFERRED",
+    "test_count": 1,
+    "test_names": [
+      "tests.test_orders.TestOrders.test_create_order_bad_qty"
+    ],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": false,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": false,
+      "reason": ""
+    }
+  },
+  "tests.test_orders.TestOrders.test_cancel_order_bad_token": {
+    "label": "INFERRED",
+    "test_count": 1,
+    "test_names": [
+      "tests.test_orders.TestOrders.test_cancel_order_bad_token"
+    ],
+    "caller_count": 0,
+    "has_unknown_edges": false,
+    "is_auth_related": true,
+    "has_broad_except": false,
+    "stale": {
+      "is_stale": true,
+      "reason": "recently changed but docstring is absent or very short"
+    }
+  }
+}

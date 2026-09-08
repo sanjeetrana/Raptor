@@ -1,0 +1,12 @@
+track = "A"
+name = "ZEPHYR"
+pitch = "High-performance, zero-dependency incremental build system & task orchestrator with SHA-256 caching, two-tier CAS hardlinks, and cybernetic TUI dashboard."
+author = "Naman Swami"
+language = "Go"
+runtime = "Go 1.22+ (100% Go Standard Library)"
+module = "taskrunner"
+manifest = "go.mod (empty require block)"
+single_file = true
+reproducible_build = true
+package_killer = true
+stdlib_log_count = 24

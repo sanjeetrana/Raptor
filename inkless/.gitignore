@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+scratch/
+
+# Stray PDFs written into the repository root by a manual run.
+# The committed output lives in examples/ and is tracked.
+/*.pdf

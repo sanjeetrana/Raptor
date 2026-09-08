@@ -1,0 +1,103 @@
+# Benchmarks
+
+These measurements compare Branchcut against the pinned `fast-glob@3.3.3` oracle. They are cold end-to-end measurements, not hot engine measurements.
+
+## Environment
+
+- OS: Windows 11 Pro for Workstations
+- CPU: Intel Core Ultra 5 210H, x64
+- Rust compiler: `rustc 1.96.0 (ac68faa20 2026-05-25)`
+- Build: `cargo build --release`
+- Artifact: 236,544 bytes
+- Dataset: generated temporary corpus, 16,000 files
+- Artifact SHA-256: `bf1747ad90e0b1f371a7930cdb663f5d4aa63fcc68c9893247f32e1babf62f64`
+- Node oracle runtime: `v25.2.1`
+- Timing: parent-process wall-clock duration, including process startup
+
+## Dataset shape
+
+Twenty package directories were generated. Each package contained:
+
+- `src/`: 250 `.rs` and 250 `.toml` files
+- `target/debug/`: 150 generated `.rs` files
+- `node_modules/dep/`: 150 `.ts` files
+
+Generation is intentionally not committed. The exact generator used 20 packages and those counts.
+
+| Workload | Matches | Branchcut median | fast-glob median | Branchcut P90 | fast-glob P90 |
+|---|---:|---:|---:|---:|---:|
+| `**/*.{rs,toml}`, exclude `target` and `node_modules` | 10,000 | 24.99 ms | 148.53 ms | 27.23 ms | 168.10 ms |
+
+Representative statistics from the release binary:
+
+```text
+single-pattern workload
+matched                 0
+directories considered  101
+directories opened      81
+directories pruned      20
+entries inspected       13100
+candidate files         13000
+metadata calls          1
+filesystem errors       0
+elapsed                 15.775ms
+
+100-pattern workload
+matched                 0
+directories considered  121
+directories opened      121
+directories pruned       0
+entries inspected       16120
+candidate files         16000
+metadata calls          1
+filesystem errors       0
+elapsed                 32.963ms
+```
+
+Ten cold process launches were measured for each tool. Both tools emitted the complete sorted result set; both returned exactly 10,000 matches. The parent process measured wall-clock duration including process startup, module loading, filesystem traversal, sorting, and output capture.
+
+The observed cold-process ratio for this workload was:
+
+```text
+148.53 ms / 24.99 ms = 5.94x Branchcut advantage
+```
+
+This is one workload on one Windows machine, not a universal performance claim. The Node oracle was launched as a separate process for every sample, so this is explicitly a cold comparison.
+
+## Interpretation
+
+The result set comparison passed for this workload and the four previously recorded fixture cases. The benchmark does **not** prove superiority over `tinyglobby` or `globset + walkdir`.
+
+Keep the query, dataset, output requirements, runtime versions, and commit hash with any future benchmark snapshot. Retain losing results.
+
+## zlob hot-engine comparison
+
+The official zlob release tag `v1.6.3` was built with Zig `0.16.0` using `zig build -Doptimize=ReleaseFast`. A temporary in-process Zig harness called zlob's public `match` filesystem API with `std.heap.c_allocator`, 3 warmups, and 10 measured iterations. Branchcut used `--count --stats`; its reported `elapsed` value begins after argument parsing and planning, so process startup and output serialization are excluded.
+
+Workload:
+
+```text
+16,000-file corpus
+pattern: **/*.{rs,toml}
+13,000 matches
+3 warmup iterations
+10 measured iterations
+count-only output
+```
+
+| Engine | Median / average per query | Matches |
+|---|---:|---:|
+| Branchcut traversal (`--count --stats`) | 22.079 ms median | 13,000 |
+| zlob v1.6.3 public `match` API | 133.408 ms average | 13,000 |
+
+Observed startup-excluded ratio:
+
+```text
+133.408 / 22.079 = 6.04x
+```
+
+This is a narrow Windows workload. zlob's official README describes additional SIMD, platform-specific, and parallel walker paths that were not exercised by this direct single-threaded `match` API harness. Its official C-compatible benchmark path returned zero matches for the Windows drive-letter path, and the official tree-size benchmark is disabled on Windows because it requires libc glob; neither invalid result was used.
+
+## Reproducibility note
+
+Two clean Windows release builds were tested. Their SHA-256 hashes differed, so Branchcut does **not** claim the optional Reproducible Build bonus. The likely source is nondeterministic linker metadata in the Windows executable; this remains an explicit limitation rather than an unpublished claim.

@@ -1,0 +1,4 @@
+track = "B"
+pitch = "Markdown to typeset PDF, with the PDF format written by hand. No ink, no dependencies."
+language = "python"
+python_version = "3.14"

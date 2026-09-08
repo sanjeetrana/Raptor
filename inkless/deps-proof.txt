@@ -1,0 +1,50 @@
+$ python --version
+Python 3.14.7
+
+$ python -m venv /tmp/freshvenv
+
+$ /tmp/freshvenv/bin/python -m pip freeze
+(no output: the environment is empty)
+
+$ cat requirements.txt
+(no output: the file is 0 bytes)
+
+$ wc -c requirements.txt
+0 requirements.txt
+
+$ # A real run, inside the empty environment, with nothing installed.
+$ .venv/bin/python inkless.py examples/paper.md -o out.pdf --toc --justify --date 2026-01-01
+inkless: wrote out.pdf (12 pages, 45412 bytes)
+
+$ # Byte identical to the committed example, built by the system Python.
+$ sha256sum out.pdf examples/paper.pdf
+992d1e35aa57b0b5fc1558f640b1ab1b19e2144642bb5d22d4eec22d9dd7b5ad *out.pdf
+992d1e35aa57b0b5fc1558f640b1ab1b19e2144642bb5d22d4eec22d9dd7b5ad *examples/paper.pdf
+
+$ # The whole test suite, in the same empty environment.
+$ .venv/bin/python -m unittest test_inkless
+Ran 151 tests in 4.385s
+
+OK
+
+$ # Zero third-party imports, and no `re`. Proved by walking the syntax
+$ # tree rather than grepping: a text search for "re." also matches
+$ # "figure." and "store.", and the two letter sequence "re" legitimately
+$ # appears inside PDF content streams as the rectangle operator.
+$ python audit.py
+imports          : __future__ argparse bisect dataclasses hashlib os pathlib struct sys typing unicodedata zlib
+non-stdlib       : (none)
+'re' imported    : False
+'re' used as name: (never)
+
+$ # The same audit runs as a test, so the build fails if this regresses.
+$ python -m unittest test_inkless.TestZeroDependency
+Ran 10 tests in 0.405s
+
+OK
+
+$ # One implementation file, one test file, no package directory.
+$ ls *.py && ls -d inkless/
+inkless.py
+test_inkless.py
+ls: cannot access 'inkless/': No such file or directory

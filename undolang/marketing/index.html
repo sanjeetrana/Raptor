@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="UndoLang is a zero-dependency crash-safe filesystem transaction runtime and DSL."
+    />
+    <title>UndoLang — Filesystem changes should finish or recover</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="masthead">
+      <div class="wrap masthead-row">
+        <a class="brand" href="index.html">UndoLang</a
+        ><span class="edition">Vol. 1 · Go 1.27 · Zero Dependencies</span
+        ><button
+          class="menu secondary"
+          data-menu
+          aria-expanded="false"
+          aria-label="Open navigation"
+        >
+          Menu
+        </button>
+        <nav class="nav" data-navigation aria-label="Primary">
+          <a href="#how">How it works</a><a href="#language">Language</a
+          ><a href="docs/index.html">Documentation</a
+          ><a href="https://github.com/daniel-oluwadunsin/undolang">GitHub</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main">
+      <section class="hero">
+        <div class="wrap">
+          <p class="kicker">Filesystem automation · with a recovery plan</p>
+          <h1>Filesystem changes should either finish or recover.</h1>
+          <p class="dek">
+            UndoLang is a crash-safe transaction runtime and tiny DSL for
+            reversible filesystem automation—plan changes, journal intent,
+            verify results, and roll back known failures.
+          </p>
+          <div class="actions">
+            <a class="button" href="docs/getting-started.html">Get started</a
+            ><a class="button secondary" href="docs/index.html"
+              >Read the docs</a
+            >
+          </div>
+        </div>
+      </section>
+      <section class="grid grid-3" aria-label="Key facts">
+        <div class="cell">
+          <div class="stat">01</div>
+          <h3>Native binary</h3>
+          <p>
+            Go 1.27 standard library only. No daemon, database, package runtime,
+            or cloud account.
+          </p>
+        </div>
+        <div class="cell">
+          <div class="stat">06</div>
+          <h3>Reversible operations</h3>
+          <p>
+            A small mutation set whose effects, backups, verification, and
+            inverse behavior are understood.
+          </p>
+        </div>
+        <div class="cell">
+          <div class="stat">CRC</div>
+          <h3>Durable authority</h3>
+          <p>
+            A framed, synced CRC32C journal—not an in-memory list—drives
+            rollback after a crash.
+          </p>
+        </div>
+      </section>
+      <section class="section" id="language">
+        <div class="wrap grid grid-2">
+          <div class="cell">
+            <p class="label">The program</p>
+            <h2>Readable intent. Explicit boundaries.</h2>
+            <p>
+              A file can contain several named transactions. Running the file
+              executes them in source order; each transaction remains its own
+              rollback boundary.
+            </p>
+            <div class="actions">
+              <a class="button secondary" href="docs/language.html"
+                >Language reference</a
+              >
+            </div>
+          </div>
+          <div class="cell">
+            <div class="copy-row">
+              <button data-copy="#hero-code">Copy</button>
+            </div>
+            <pre
+              id="hero-code"
+            ><code class="language-undolang">transaction "upgrade" {
+  require contains "VERSION" "1"
+  copy "release/app" -> "bin/app" overwrite
+  write "VERSION" = "2"
+  assert contains "VERSION" "2"
+}</code></pre>
+            <p class="small">
+              <code>undo run migration.undo --yes</code><br /><code
+                >undo run migration.undo --transaction upgrade --yes</code
+              >
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="section dark" id="how">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <p class="label">The protocol</p>
+              <h2>Plan before. Recover after.</h2>
+            </div>
+          </div>
+          <p class="pipeline">
+            PLAN → LOCK → PREPARE → JOURNAL → APPLY → VERIFY → COMMIT<br /><span
+              class="red"
+              >　　　　　　　　　　　　　　　 failure ↘ ROLLBACK</span
+            >
+          </p>
+          <div class="grid grid-3">
+            <div class="cell">
+              <h3>Inspect</h3>
+              <p>
+                <code>check</code> validates the complete source.
+                <code>plan</code> describes exact current effects and rollback
+                cost without target mutation.
+              </p>
+            </div>
+            <div class="cell">
+              <h3>Execute</h3>
+              <p>
+                Every operation records verified inverse metadata before
+                mutation. Assertions test the final intended state.
+              </p>
+            </div>
+            <div class="cell">
+              <h3>Recover</h3>
+              <p>
+                A fresh process validates the journal and resumes reverse
+                rollback. Ambiguous or corrupt state fails closed.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <p class="label">Designed for real work</p>
+              <h2>Migration without mystery.</h2>
+            </div>
+          </div>
+          <div class="grid grid-3">
+            <article class="cell">
+              <h3>Application upgrades</h3>
+              <p>
+                Stage a release, replace binaries and configuration, then verify
+                a version marker.
+              </p>
+            </article>
+            <article class="cell">
+              <h3>AI-agent refactors</h3>
+              <p>
+                Turn generated filesystem intent into a reviewable JSON plan and
+                an explicit approval boundary.
+              </p>
+            </article>
+            <article class="cell">
+              <h3>Local data layouts</h3>
+              <p>
+                Move and rewrite multi-file state while retaining enough prior
+                state to recover supported changes.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="wrap grid grid-2">
+          <div class="cell">
+            <p class="label">Start locally</p>
+            <h2>One command to build.</h2>
+            <pre><code>go build -trimpath -buildvcs=false -o undo ./cmd/undo
+./undo check examples/app-upgrade.undo
+./undo plan examples/app-upgrade.undo --root ./demo</code></pre>
+          </div>
+          <div class="cell">
+            <p class="label">Honest boundaries</p>
+            <h3>Recoverable is not isolated.</h3>
+            <p>
+              UndoLang does not claim atomic visibility across many files.
+              Platform rename and directory-sync behavior varies. ACLs,
+              ownership, xattrs, sparse allocation, and hard-link identity are
+              outside v1.
+            </p>
+            <a href="docs/limitations.html">Read every limitation →</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="wrap footer-row">
+        <strong>UndoLang</strong
+        ><span class="small"
+          >One binary. One tiny language. No runtime packages.</span
+        ><a href="docs/agents.html">Agent guide</a>
+      </div>
+    </footer>
+    <script src="assets/site.js"></script>
+  </body>
+</html>
